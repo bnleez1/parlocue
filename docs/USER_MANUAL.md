@@ -249,3 +249,5 @@ recite --version
 ## Feedback & Suggestions
 
 Have comments on how you use Recite or ideas for improvements? Share your feedback, feature requests, or bug reports on [GitHub Issues](https://github.com/bnleez1/recite/issues).
+
+*Recite is a personal, independent open-source project and has no affiliation with, endorsement from, or sponsorship by any institution, employer, organization, or third-party company or service.*
