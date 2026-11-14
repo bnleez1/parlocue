@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     // Matches the window to parlocue.desktop, so the compositor (Wayland app_id)
     // and the launcher pick up the installed icon.
     app.setDesktopFileName("parlocue");
-    app.setWindowIcon(QIcon::fromTheme("parlocue"));
+    app.setWindowIcon(QIcon::fromTheme("parlocue", QIcon(":/parlocue.svg")));
 
     QQuickStyle::setStyle("Material");
 

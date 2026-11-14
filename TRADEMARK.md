@@ -6,11 +6,11 @@ Copyright (c) 2026 Benjamin L. Stewart
 
 The source code and documentation in this repository are licensed under the **MIT License** (see [`LICENSE`](LICENSE)). That open-source license grants permissions solely with respect to **copyright** in the source code and documentation.
 
-**The MIT License does not grant any trademark rights**, license, or permission to use the **ParloCue™** name, wordmark, application icon/logo, or any confusingly similar brand identifier.
+**Brand Assets Excluded from MIT License (All Rights Reserved):** The MIT License does **not** grant any trademark rights, nor any copyright license or permission to copy, modify, or redistribute the **ParloCue™** name, wordmark, or application icon/logo (`pkgbuild/parlocue.svg`) as branding for another project, package, or service.
 
 ## Brand Ownership
 
-- **ParloCue™** and its accompanying waveform application icon (`pkgbuild/parlocue.svg`) are trademarks of Benjamin L. Stewart, established through active public distribution and use.
+- **ParloCue™** and its accompanying Cue Brackets application icon (`pkgbuild/parlocue.svg`) are proprietary brand assets of Benjamin L. Stewart, established through active public distribution and use.
 - **Unregistered Mark Notice:** `ParloCue™` is currently marked with `™` as an unregistered trademark claim; it is **not** a federally registered trademark (`®` or `M.R.`).
 
 ## Permitted and Prohibited Uses

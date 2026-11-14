@@ -9,5 +9,6 @@
         <file alias="skill/SKILL.md">skill/SKILL.md</file>
         <file alias="i18n/en.json">i18n/en.json</file>
         <file alias="i18n/da.json">i18n/da.json</file>
+        <file alias="parlocue.svg">../pkgbuild/parlocue.svg</file>
     </qresource>
 </RCC>

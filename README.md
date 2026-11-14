@@ -1,4 +1,4 @@
-# ParloCue™
+<h1><img src="pkgbuild/parlocue.svg" width="40" height="40" alt="ParloCue™ logo" align="absmiddle" /> ParloCue™</h1>
 
 ![ParloCue™](screenshot.png)
 
@@ -118,7 +118,7 @@ Contributions are welcome! To keep the project aligned with its core goals, dire
 ## License, Trademark & Third-Party Notices
 
 - **Code License (MIT):** The source code and documentation in this repository are licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-- **Trademark Notice:** **ParloCue™** and the ParloCue application icon are trademarks of Benjamin L. Stewart and are **not** licensed under the MIT License. Forked code must be rebranded with a distinct name and icon; see [TRADEMARK.md](TRADEMARK.md) for full brand usage boundaries.
+- **Trademark & Brand Assets Notice:** **ParloCue™** and the ParloCue Cue Brackets icon ([`pkgbuild/parlocue.svg`](pkgbuild/parlocue.svg)) are **All Rights Reserved** and are **not** licensed under the MIT License (neither trademark rights nor copyright permissions in the logo artwork are granted for forks or derivative brands). Forked code must be rebranded with a distinct name and icon; see [TRADEMARK.md](TRADEMARK.md) for full brand boundaries.
 - **Adapted Patterns:** Theming, translation, and portal file-picker patterns are adapted from Omacut and Monologue (Copyright © David Heinemeier Hansson, MIT License).
 - **External Dependencies:** ParloCue™ invokes system-installed [Qt 6](https://www.qt.io/), [FFmpeg](https://ffmpeg.org/), and the third-party [`edge-tts`](https://github.com/rany2/edge-tts) Python package as external tools rather than bundling them.
 - **Disclaimer:** ParloCue™ is a personal, independent open-source project and has no affiliation with, endorsement from, or sponsorship by any institution, employer, organization, or third-party company or service (including Microsoft). All views, features, and code are solely those of the author/contributors. Voice synthesis relies on Microsoft's online Edge Read Aloud service via `edge-tts`; users are responsible for complying with applicable service terms and copyright laws for any scripts they input or audio they distribute.
