@@ -87,6 +87,16 @@ recite skill install
 
 ---
 
+## Feedback & Suggestions
+
+Comments, real-world use cases, and improvement ideas are welcome! Feel free to open an issue on [GitHub Issues](https://github.com/bnleez1/recite/issues) to:
+
+- Share how you are using Recite (for example, classroom listening activities, podcasts, or content creation)
+- Suggest new features, workflow improvements, or UI refinements
+- Report bugs or unexpected behavior
+
+---
+
 ## Contributing
 
 Contributions are welcome! To keep the project aligned with its core goals, direct push access to the `main` branch is restricted. Please follow the pull request workflow:

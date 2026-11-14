@@ -243,3 +243,9 @@ recite --version
 - **"ffmpeg / ffprobe not found" banner**: Install `ffmpeg` via your package manager (`sudo pacman -S ffmpeg` on Arch/Omarchy).
 - **Line shows a red status dot / synthesis error**: Check your internet connection (`edge-tts` queries Microsoft's online TTS service) and confirm the line text is not empty.
 - **Line has no sound when clicking `▶`**: Make sure the line contains spoken text; whitespace-only lines are skipped during playback and export.
+
+---
+
+## Feedback & Suggestions
+
+Have comments on how you use Recite or ideas for improvements? Share your feedback, feature requests, or bug reports on [GitHub Issues](https://github.com/bnleez1/recite/issues).
