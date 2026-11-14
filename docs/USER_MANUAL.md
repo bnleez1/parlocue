@@ -1,6 +1,6 @@
-# Recite User Manual
+# ParloCue™ User Manual
 
-Recite turns lecture and dialogue scripts into spoken `.mp3` audio using neural text-to-speech voices (`edge-tts`), without copying lines one by one or stitching clips manually.
+**ParloCue™** turns lecture and dialogue scripts into spoken `.mp3` audio using neural text-to-speech voices (`edge-tts`), without copying lines one by one or stitching clips manually.
 
 ---
 
@@ -20,45 +20,45 @@ Recite turns lecture and dialogue scripts into spoken `.mp3` audio using neural 
 
 ## Getting Started
 
-### Installing Recite
+### Installing ParloCue™
 
-On Omarchy OS / Arch-based Linux, clone the repository and run the installer:
+On Omarchy OS / Arch-based Linux, download a release package from [GitHub Releases](https://github.com/bnleez1/parlocue/releases) or clone the repository and run the installer:
 
 ```bash
-git clone https://github.com/bnleez1/recite.git
-cd recite
+git clone https://github.com/bnleez1/parlocue.git
+cd parlocue
 ./bin/install
 ```
 
-This builds the binary, installs `/usr/bin/recite`, and registers the desktop launcher entry so **Recite** appears in your application menu.
+This builds the binary, installs `/usr/bin/parlocue`, and registers the desktop launcher entry so **ParloCue** appears in your application menu.
 
 ### First-Time Voice Engine Setup
 
-Recite requires:
+ParloCue requires:
 - **`edge-tts`** (Python package) to synthesize Microsoft Neural Voices (internet connection required for synthesis and voice list refresh).
 - **`ffmpeg`** (with `ffprobe` and `libmp3lame`) to stitch lines, insert pauses, normalize loudness, and export `.mp3` files.
 
-If `edge-tts` is not detected when you launch Recite, a banner appears at the top of the window with an **Install Voices Engine** button. Clicking it creates a dedicated virtual environment at `~/.local/share/recite/venv` and installs `edge-tts` automatically.
+If `edge-tts` is not detected when you launch ParloCue, a banner appears at the top of the window with an **Install Voices Engine** button. Clicking it creates a dedicated virtual environment at `~/.local/share/parlocue/venv` and installs `edge-tts` automatically. *(If you previously installed the voice engine under `~/.local/share/recite/venv`, ParloCue detects and reuses it automatically.)*
 
-### Launching Recite
+### Launching ParloCue
 
-- Open **Recite** from the Omarchy app launcher, or
+- Open **ParloCue** from the Omarchy app launcher, or
 - Launch from a terminal:
   ```bash
-  recite
-  recite path/to/lesson.recite
-  recite path/to/script.txt
+  parlocue
+  parlocue path/to/lesson.parlocue
+  parlocue path/to/script.txt
   ```
 
 ---
 
 ## Workspace Overview
 
-Recite uses a two-pane dark studio layout:
+ParloCue uses a two-pane dark studio layout:
 
 1. **Top Toolbar**
    - **Script title**: Click to rename your project. A dot (`●`) next to the title indicates unsaved changes.
-   - **Paste Script**, **New**, **Open**, **Save**: Manage `.recite` projects and `.txt` script imports.
+   - **Paste Script**, **New**, **Open**, **Save**: Manage `.parlocue` projects (and legacy `.recite` or `.txt` script imports).
    - **Play Full / Stop**: Synthesize (if needed) and preview the entire script from start to finish.
    - **Export MP3…**: Open the audio export dialog.
    - **`?`**: Open the keyboard shortcuts overlay.
@@ -135,7 +135,7 @@ You can type lines directly in the timeline or import formatted text via **Paste
    - **Gender**: `All`, `Female`, or `Male`.
    - **Favorites (`★`)**: Star voices to filter down to your go-to cast later.
 4. Click **Sample** to audition a voice, or **Use** to assign it to the speaker.
-5. Click **Refresh** to fetch the full online Microsoft Neural Voice catalog (Recite includes 18 English voices built in and caches refreshed lists locally—47 English voices across 14 accents/dialects when refreshed).
+5. Click **Refresh** to fetch the full online Microsoft Neural Voice catalog (ParloCue includes 18 English voices built in and caches refreshed lists locally—47 English voices across 14 accents/dialects when refreshed).
 6. Click **Randomize** in the **Speakers & Voices** header at any time to assign fresh, varied-dialect English voices to all speakers in your script (undoable with `Ctrl+Z`).
 
 ### Adjusting Delivery
@@ -153,17 +153,17 @@ You can type lines directly in the timeline or import formatted text via **Paste
 - **Single line**: Click **`▶`** on a line card or press **`Ctrl+Enter`** to preview the selected line.
 - **Full script**: Click **Play Full** or press **`Space`** / **`Ctrl+Space`** to synthesize all uncached lines, stitch them with pauses, and play the full audio while highlighting and scrolling to the active line.
 - **Cancel / Stop**: Press **`Esc`** at any time to cancel active synthesis/export or stop playback.
-- **Instant caching**: Synthesized clips are cached by `(text, voice, rate, pitch)` under `~/.cache/recite/clips/`. Editing one line only re-synthesizes that line; unchanged lines stay cached (green dot).
+- **Instant caching**: Synthesized clips are cached by `(text, voice, rate, pitch)` under `~/.cache/parlocue/clips/`. Editing one line only re-synthesizes that line; unchanged lines stay cached (green dot).
 
 ---
 
 ## Saving & Exporting Audio
 
-### Saving Projects (`.recite`)
+### Saving Projects (`.parlocue`)
 
-- Press **`Ctrl+S`** (or click **Save**) to save your script, speakers, voice settings, pauses, and overrides as a `.recite` JSON project file.
+- Press **`Ctrl+S`** (or click **Save**) to save your script, speakers, voice settings, pauses, and overrides as a `.parlocue` JSON project file. (Existing `.recite` files also open seamlessly.)
 - Press **`Ctrl+Shift+S`** for **Save As**.
-- If you try to start a **New** project, **Open** another file, or **Quit** with unsaved changes (`●`), Recite prompts you to save or discard.
+- If you try to start a **New** project, **Open** another file, or **Quit** with unsaved changes (`●`), ParloCue prompts you to save or discard.
 
 ### Exporting MP3s
 
@@ -180,7 +180,7 @@ Click **Export MP3…** (or press **`Ctrl+E`**) to open **Export Audio**:
 
 ## Keyboard Shortcuts
 
-Press **`?`** or **`F1`** at any time in Recite to view the in-app shortcut overlay.
+Press **`?`** or **`F1`** at any time in ParloCue to view the in-app shortcut overlay.
 
 | Shortcut | Action |
 | --- | --- |
@@ -189,13 +189,12 @@ Press **`?`** or **`F1`** at any time in Recite to view the in-app shortcut over
 | `Ctrl+I` | Paste or import a script |
 | `Ctrl+L` | Add a new line after selection |
 | `Ctrl+N` | New project |
-| `Ctrl+O` | Open `.recite` project or `.txt` script |
+| `Ctrl+O` | Open `.parlocue`, `.recite`, or `.txt` script |
 | `Ctrl+S` / `Ctrl+Shift+S` | Save / Save As |
 | `Ctrl+E` | Export combined MP3 or clips |
 | `Ctrl+Z` / `Ctrl+Shift+Z` | Undo / Redo |
-| `Esc` | Cancel active audio generation or stop playback |
 | `?` / `F1` | Show or hide keyboard shortcuts |
-| `Q` / `Ctrl+Q` | Quit Recite |
+| `Q` / `Ctrl+Q` | Quit ParloCue |
 
 *(Single-key shortcuts such as `Space`, `?`, `Q`, and timeline `Undo`/`Redo` are automatically paused while typing inside a text field.)*
 
@@ -203,27 +202,27 @@ Press **`?`** or **`F1`** at any time in Recite to view the in-app shortcut over
 
 ## CLI & Agent Usage
 
-Recite also runs headlessly from the terminal for scripting, batch exports, and AI agent workflows:
+ParloCue also runs headlessly from the terminal for scripting, batch exports, and AI agent workflows:
 
 ```bash
 # Verify edge-tts, ffmpeg, and (optionally) validate a script
-recite check [script.recite|script.txt] [--json]
+parlocue check [script.parlocue|script.recite|script.txt] [--json]
 
 # List available Microsoft Neural Voices (optionally filter by locale prefix)
-recite voices [--locale en-US] [--json]
+parlocue voices [--locale en-US] [--json]
 
 # Synthesize and export combined MP3 and/or per-line clips
-recite export <file> [--output out.mp3] [--clips-dir dir] [--bitrate 192] [--normalize] [--json]
+parlocue export <file> [--output out.mp3] [--clips-dir dir] [--bitrate 192] [--normalize] [--json]
 
-# Install the bundled agent skill to ~/.agents/skills/recite/SKILL.md
-recite skill install
+# Install the bundled agent skill to ~/.agents/skills/parlocue/SKILL.md
+parlocue skill install
 
 # Open the desktop GUI (optionally loading a file)
-recite [open] [file.recite|script.txt]
+parlocue [open] [file.parlocue|file.recite|script.txt]
 
 # Show CLI help or version
-recite --help
-recite --version
+parlocue --help
+parlocue --version
 ```
 
 ---
@@ -232,14 +231,14 @@ recite --version
 
 ### Local Data & Cache Paths
 
-- **`~/.cache/recite/clips/`**: Cached per-line synthesized audio clips.
-- **`~/.cache/recite/voices.json`**: Cached voice catalog from **Refresh**.
-- **`~/.cache/recite/favorites.json`**: Starred favorite voices.
-- **`~/.local/share/recite/venv/`**: Managed Python virtual environment for `edge-tts` (if installed via the in-app button).
+- **`~/.cache/parlocue/clips/`**: Cached per-line synthesized audio clips.
+- **`~/.cache/parlocue/voices.json`**: Cached voice catalog from **Refresh**.
+- **`~/.cache/parlocue/favorites.json`**: Starred favorite voices.
+- **`~/.local/share/parlocue/venv/`**: Managed Python virtual environment for `edge-tts` (if installed via the in-app button; existing `~/.local/share/recite/venv/` environments are also detected).
 
 ### Common Issues
 
-- **"edge-tts is not installed yet" banner**: Click **Install Voices Engine** in the banner, or ensure `edge-tts` is installed in Python (`~/.local/share/recite/venv`, `pipx`, or system Python).
+- **"edge-tts is not installed yet" banner**: Click **Install Voices Engine** in the banner, or ensure `edge-tts` is installed in Python (`~/.local/share/parlocue/venv`, `pipx`, or system Python).
 - **"ffmpeg / ffprobe not found" banner**: Install `ffmpeg` via your package manager (`sudo pacman -S ffmpeg` on Arch/Omarchy).
 - **Line shows a red status dot / synthesis error**: Check your internet connection (`edge-tts` queries Microsoft's online TTS service) and confirm the line text is not empty.
 - **Line has no sound when clicking `▶`**: Make sure the line contains spoken text; whitespace-only lines are skipped during playback and export.
@@ -248,6 +247,6 @@ recite --version
 
 ## Feedback & Suggestions
 
-Have comments on how you use Recite or ideas for improvements? Share your feedback, feature requests, or bug reports on [GitHub Issues](https://github.com/bnleez1/recite/issues).
+Have comments on how you use ParloCue™ or ideas for improvements? Share your feedback, feature requests, or bug reports on [GitHub Issues](https://github.com/bnleez1/parlocue/issues).
 
-*Recite is a personal, independent open-source project and has no affiliation with, endorsement from, or sponsorship by any institution, employer, organization, or third-party company or service.*
+*ParloCue™ is a personal, independent open-source project and has no affiliation with, endorsement from, or sponsorship by any institution, employer, organization, or third-party company or service. The MIT License applies to code only and does not grant trademark rights to the ParloCue™ name or logo; see [TRADEMARK.md](TRADEMARK.md).*

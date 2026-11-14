@@ -37,7 +37,7 @@ struct ScriptLine {
     bool hasPitchOverride = false;
     int pitchOverride = 0;
 
-    // Runtime synthesis state (not saved in .recite project JSON).
+    // Runtime synthesis state (not saved in .parlocue project JSON).
     QString clipState = "idle"; // idle | synthesizing | ready | error
     QString clipError;
     qint64 durationMs = 0;

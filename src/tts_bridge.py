@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bridge between Recite (C++/Qt) and Microsoft Neural TTS via edge-tts."""
+"""Bridge between ParloCue (C++/Qt) and Microsoft Neural TTS via edge-tts."""
 
 import argparse
 import asyncio
@@ -12,6 +12,7 @@ import sys
 def _attach_known_venvs():
     home = os.path.expanduser("~")
     patterns = [
+        os.path.join(home, ".local/share/parlocue/venv/lib/python*/site-packages"),
         os.path.join(home, ".local/share/recite/venv/lib/python*/site-packages"),
         os.path.join(home, ".local/share/pipx/venvs/edge-tts/lib/python*/site-packages"),
     ]
@@ -64,7 +65,7 @@ async def cmd_synthesize(edge_tts, text_file, voice, rate, pitch, out_path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Recite TTS bridge")
+    parser = argparse.ArgumentParser(description="ParloCue TTS bridge")
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("check")

@@ -1,8 +1,8 @@
-# Recite
+# ParloCue™
 
-![Recite](screenshot.png)
+![ParloCue™](screenshot.png)
 
-Turn audio scripts for English listening and dialogue practice into spoken `.mp3` files using neural text-to-speech voices (`edge-tts`) — without copying lines one by one or stitching clips manually in Kdenlive.
+**ParloCue™** turns audio scripts for English listening and dialogue practice into spoken `.mp3` files using neural text-to-speech voices (`edge-tts`) — without copying lines one by one or stitching clips manually in Kdenlive.
 
 Built using Vibe Code on Omarchy OS.
 
@@ -15,7 +15,7 @@ Built using Vibe Code on Omarchy OS.
 - **Voice, Speed, Pitch & Pauses**: Adjust rate (`-50%` to `+100%`), pitch (`-50Hz` to `+50Hz`), and pause duration per speaker or per line.
 - **Instant Caching & Preview**: Preview individual lines or the full stitched script with live line highlighting.
 - **Export for Direct Use or Kdenlive**: Export a single combined `.mp3` with exact pauses (plus optional `-14 LUFS` loudness normalization) and/or numbered per-line `.mp3` clips (`001_Narrator.mp3`, `002_Student.mp3`, …).
-- **Save & Reopen Projects**: Save script projects as `.recite` files or import `.txt` scripts.
+- **Save & Reopen Projects**: Save script projects as `.parlocue` files (with backward-compatible support for opening legacy `.recite` files) or import `.txt` scripts.
 
 ---
 
@@ -32,11 +32,17 @@ Before installing and running this application, ensure your system meets the fol
 
 ## Installation
 
+### Option 1: Download a Release Package
+
+Download a packaged release from **[GitHub Releases](https://github.com/bnleez1/parlocue/releases)** and install the Arch package with `pacman -U parlocue-*.pkg.tar.zst`.
+
+### Option 2: Build & Install from Source
+
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/bnleez1/recite.git
-cd recite
+git clone https://github.com/bnleez1/parlocue.git
+cd parlocue
 ```
 
 2. Build and run tests:
@@ -56,7 +62,7 @@ cd recite
 
 ## Usage
 
-Launch the desktop application from your app launcher or terminal (`recite`), or run the built binary directly (`./build/recite`).
+Launch the desktop application from your app launcher or terminal (`parlocue`), or run the built binary directly (`./build/parlocue`).
 
 See the full **[User Manual](docs/USER_MANUAL.md)** for a step-by-step guide to script formatting, speaker/voice controls, line overrides, MP3 exporting, and troubleshooting.
 
@@ -69,7 +75,7 @@ See the full **[User Manual](docs/USER_MANUAL.md)** for a step-by-step guide to 
 | `Ctrl+I` | Paste or import a script |
 | `Ctrl+L` | Add a new line after selection |
 | `Ctrl+N` | New project |
-| `Ctrl+O` | Open `.recite` project or `.txt` script |
+| `Ctrl+O` | Open `.parlocue`, `.recite`, or `.txt` script |
 | `Ctrl+S` / `Ctrl+Shift+S` | Save / Save As |
 | `Ctrl+E` | Export combined `.mp3` or individual clips |
 | `Ctrl+Z` / `Ctrl+Shift+Z` | Undo / Redo |
@@ -79,19 +85,19 @@ See the full **[User Manual](docs/USER_MANUAL.md)** for a step-by-step guide to 
 ### CLI & Agent Usage
 
 ```sh
-recite check [script.recite] --json
-recite voices --locale en-US --json
-recite export lesson.recite --output lesson.mp3 --clips-dir ./clips --json
-recite skill install
+parlocue check [script.parlocue] --json
+parlocue voices --locale en-US --json
+parlocue export lesson.parlocue --output lesson.mp3 --clips-dir ./clips --json
+parlocue skill install
 ```
 
 ---
 
 ## Feedback & Suggestions
 
-Comments, real-world use cases, and improvement ideas are welcome! Feel free to open an issue on [GitHub Issues](https://github.com/bnleez1/recite/issues) to:
+Comments, real-world use cases, and improvement ideas are welcome! Feel free to open an issue on [GitHub Issues](https://github.com/bnleez1/parlocue/issues) to:
 
-- Share how you are using Recite (for example, classroom listening activities, podcasts, or content creation)
+- Share how you are using ParloCue™ (for example, classroom listening activities, podcasts, or content creation)
 - Suggest new features, workflow improvements, or UI refinements
 - Report bugs or unexpected behavior
 
@@ -109,10 +115,10 @@ Contributions are welcome! To keep the project aligned with its core goals, dire
 
 ---
 
-## License & Third-Party Notices
+## License, Trademark & Third-Party Notices
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
+- **Code License (MIT):** The source code and documentation in this repository are licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+- **Trademark Notice:** **ParloCue™** and the ParloCue application icon are trademarks of Benjamin L. Stewart and are **not** licensed under the MIT License. Forked code must be rebranded with a distinct name and icon; see [TRADEMARK.md](TRADEMARK.md) for full brand usage boundaries.
 - **Adapted Patterns:** Theming, translation, and portal file-picker patterns are adapted from Omacut and Monologue (Copyright © David Heinemeier Hansson, MIT License).
-- **External Dependencies:** Recite invokes system-installed [Qt 6](https://www.qt.io/), [FFmpeg](https://ffmpeg.org/), and the third-party [`edge-tts`](https://github.com/rany2/edge-tts) Python package as external tools rather than bundling them.
-- **Disclaimer:** Recite is a personal, independent open-source project and has no affiliation with, endorsement from, or sponsorship by any institution, employer, organization, or third-party company or service (including Microsoft). All views, features, and code are solely those of the author/contributors. Voice synthesis relies on Microsoft's online Edge Read Aloud service via `edge-tts`; users are responsible for complying with applicable service terms and copyright laws for any scripts they input or audio they distribute.
+- **External Dependencies:** ParloCue™ invokes system-installed [Qt 6](https://www.qt.io/), [FFmpeg](https://ffmpeg.org/), and the third-party [`edge-tts`](https://github.com/rany2/edge-tts) Python package as external tools rather than bundling them.
+- **Disclaimer:** ParloCue™ is a personal, independent open-source project and has no affiliation with, endorsement from, or sponsorship by any institution, employer, organization, or third-party company or service (including Microsoft). All views, features, and code are solely those of the author/contributors. Voice synthesis relies on Microsoft's online Edge Read Aloud service via `edge-tts`; users are responsible for complying with applicable service terms and copyright laws for any scripts they input or audio they distribute.

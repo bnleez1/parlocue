@@ -27,7 +27,7 @@ public:
     }
 };
 
-class ReciteTests : public QObject {
+class ParloCueTests : public QObject {
     Q_OBJECT
 
 private slots:
@@ -141,7 +141,7 @@ private slots:
         backend.redo();
         QCOMPARE(backend.lineCount(), 2);
 
-        const QString projectPath = projectDir.filePath("lesson1.recite");
+        const QString projectPath = projectDir.filePath("lesson1.parlocue");
         QVERIFY(backend.saveToFile(projectPath));
         QCOMPARE(backend.dirty(), false);
 
@@ -149,6 +149,13 @@ private slots:
         QVERIFY(reloaded.loadFromFile(projectPath));
         QCOMPARE(reloaded.lineCount(), 2);
         QCOMPARE(reloaded.lineModel()->items().at(1).text, QString("Second sentence."));
+
+        // Legacy .recite project files remain readable.
+        const QString legacyPath = projectDir.filePath("legacy.recite");
+        QVERIFY(QFile::copy(projectPath, legacyPath));
+        Backend legacyReloaded(&picker, cacheDir.path(), "/nonexistent/python");
+        QVERIFY(legacyReloaded.loadFromFile(legacyPath));
+        QCOMPARE(legacyReloaded.lineCount(), 2);
     }
 
     void pureFormattingAndFilterScript()
@@ -300,5 +307,5 @@ private:
     }
 };
 
-QTEST_MAIN(ReciteTests)
-#include "recite_tests.moc"
+QTEST_MAIN(ParloCueTests)
+#include "parlocue_tests.moc"

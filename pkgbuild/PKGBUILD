@@ -1,4 +1,4 @@
-pkgname=recite
+pkgname=parlocue
 pkgver=0.1.0
 pkgrel=1
 pkgdesc='Turn audio scripts into multi-voice MP3s'
@@ -6,6 +6,8 @@ arch=('x86_64' 'aarch64')
 license=('MIT')
 depends=('qt6-base' 'qt6-declarative' 'qt6-multimedia' 'qt6-wayland' 'ffmpeg' 'python' 'xdg-desktop-portal')
 makedepends=('gcc' 'make')
+conflicts=('recite')
+replaces=('recite')
 source=()
 sha256sums=()
 
@@ -16,8 +18,9 @@ build() {
 
 package() {
   cd "$startdir/.."
-  install -Dm755 build/recite "$pkgdir/usr/bin/recite"
+  install -Dm755 build/parlocue "$pkgdir/usr/bin/parlocue"
   install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
-  install -Dm644 "$startdir/recite.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/recite.svg"
-  install -Dm644 "$startdir/recite.desktop" "$pkgdir/usr/share/applications/recite.desktop"
+  install -Dm644 TRADEMARK.md "$pkgdir/usr/share/licenses/$pkgname/TRADEMARK.md"
+  install -Dm644 "$startdir/parlocue.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/parlocue.svg"
+  install -Dm644 "$startdir/parlocue.desktop" "$pkgdir/usr/share/applications/parlocue.desktop"
 }

@@ -31,14 +31,14 @@ void printOut(const QJsonObject &o) {
 
 void printUsage() {
     std::fprintf(stdout,
-        "recite — Turn audio scripts into multi-voice MP3s\n\n"
+        "parlocue — Turn audio scripts into multi-voice MP3s\n\n"
         "Usage:\n"
-        "  recite [open] [file.recite|script.txt]    Open the desktop app\n"
-        "  recite check [file] [--json]              Verify edge-tts, ffmpeg, and optional script\n"
-        "  recite voices [--locale PREFIX] [--json]  List available neural voices\n"
-        "  recite export <file> [--output out.mp3] [--clips-dir dir] [--bitrate 192] [--normalize] [--json]\n"
-        "  recite skill install                      Install the recite agent skill\n"
-        "  recite --help                             Show this help\n");
+        "  parlocue [open] [file.parlocue|file.recite|script.txt]  Open the desktop app\n"
+        "  parlocue check [file] [--json]                          Verify edge-tts, ffmpeg, and optional script\n"
+        "  parlocue voices [--locale PREFIX] [--json]              List available neural voices\n"
+        "  parlocue export <file> [--output out.mp3] [--clips-dir dir] [--bitrate 192] [--normalize] [--json]\n"
+        "  parlocue skill install                                  Install the parlocue agent skill\n"
+        "  parlocue --help                                         Show this help\n");
 }
 
 int cmdSkillInstall(bool json) {
@@ -48,7 +48,7 @@ int cmdSkillInstall(bool json) {
         return 1;
     }
     const QByteArray data = src.readAll();
-    const QString destDir = QDir::homePath() + "/.agents/skills/recite";
+    const QString destDir = QDir::homePath() + "/.agents/skills/parlocue";
     QDir().mkpath(destDir);
     const QString destPath = destDir + "/SKILL.md";
     QSaveFile out(destPath);
@@ -78,7 +78,7 @@ int runCli(int argc, char *argv[]) {
     qputenv("QT_QPA_PLATFORM", "offscreen");
     qunsetenv("QT_QPA_PLATFORMTHEME");
     QGuiApplication app(argc, argv);
-    app.setApplicationName("recite");
+    app.setApplicationName("parlocue");
     app.setApplicationVersion("0.1.0");
 
     const QStringList args = app.arguments();
@@ -90,13 +90,13 @@ int runCli(int argc, char *argv[]) {
         return 0;
     }
     if (cmd == "--version" || cmd == "-v") {
-        std::fprintf(stdout, "recite 0.1.0\n");
+        std::fprintf(stdout, "parlocue 0.1.0\n");
         return 0;
     }
     if (cmd == "skill") {
         if (args.value(2) == "install")
             return cmdSkillInstall(json);
-        printErr("Usage: recite skill install", json);
+        printErr("Usage: parlocue skill install", json);
         return 1;
     }
 
@@ -200,7 +200,7 @@ int runCli(int argc, char *argv[]) {
         }
 
         if (fileArg.isEmpty() || (outMp3.isEmpty() && clipsDir.isEmpty())) {
-            printErr("Usage: recite export <file> [--output out.mp3] [--clips-dir dir]", json);
+            printErr("Usage: parlocue export <file> [--output out.mp3] [--clips-dir dir]", json);
             return 1;
         }
 

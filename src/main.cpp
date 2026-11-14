@@ -1,4 +1,4 @@
-// recite — Turn audio scripts into multi-voice MP3s.
+// parlocue — Turn audio scripts into multi-voice MP3s.
 
 #include <QGuiApplication>
 #include <QIcon>
@@ -23,13 +23,13 @@ int main(int argc, char *argv[]) {
         return runCli(argc, argv);
 
     QGuiApplication app(argc, argv);
-    app.setApplicationName("recite");
+    app.setApplicationName("parlocue");
     app.setApplicationVersion("0.1.0");
 
-    // Matches the window to recite.desktop, so the compositor (Wayland app_id)
+    // Matches the window to parlocue.desktop, so the compositor (Wayland app_id)
     // and the launcher pick up the installed icon.
-    app.setDesktopFileName("recite");
-    app.setWindowIcon(QIcon::fromTheme("recite"));
+    app.setDesktopFileName("parlocue");
+    app.setWindowIcon(QIcon::fromTheme("parlocue"));
 
     QQuickStyle::setStyle("Material");
 
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
     Theme theme;
     Backend backend;
 
-    // Accept either `recite file.recite` or `recite open file.recite`.
+    // Accept either `parlocue file.parlocue` or `parlocue open file.parlocue`.
     const QStringList args = app.arguments();
     QString openPath;
     if (args.size() >= 2) {

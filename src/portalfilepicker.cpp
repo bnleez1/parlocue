@@ -99,7 +99,7 @@ void PortalFilePicker::callChooser(const QString &method, const QString &title,
 
     m_pendingCallback = std::move(callback);
 
-    const QString token = QStringLiteral("recite_%1_%2")
+    const QString token = QStringLiteral("parlocue_%1_%2")
                               .arg(QCoreApplication::applicationPid())
                               .arg(++m_tokenCounter);
     QString sender = bus.baseService();

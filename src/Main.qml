@@ -10,7 +10,7 @@ ApplicationWindow {
     minimumWidth: 760
     minimumHeight: 520
     visible: true
-    title: (backend.dirty ? "* " : "") + backend.projectTitle + " — Recite"
+    title: (backend.dirty ? "* " : "") + backend.projectTitle + " — ParloCue"
     color: "#0e0e10"
 
     Material.theme: Material.Dark
@@ -234,7 +234,7 @@ ApplicationWindow {
                     spacing: 8
 
                     Label {
-                        text: "Recite"
+                        text: "ParloCue"
                         font.pixelSize: 16
                         font.bold: true
                         color: theme.accent

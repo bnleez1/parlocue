@@ -395,7 +395,7 @@ Backend::Backend(FilePicker *picker, const QString &cacheDir, const QString &pyt
         ? QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
         : cacheDir;
     if (m_cacheDir.isEmpty())
-        m_cacheDir = QDir::homePath() + "/.cache/recite";
+        m_cacheDir = QDir::homePath() + "/.cache/parlocue";
     m_clipsDir = m_cacheDir + "/clips";
     QDir().mkpath(m_clipsDir);
 
@@ -417,8 +417,11 @@ Backend::Backend(FilePicker *picker, const QString &cacheDir, const QString &pyt
     loadCachedVoices();
     newProject();
 
-    if (m_pythonOverride.isEmpty())
-        m_pythonOverride = qEnvironmentVariable("RECITE_TTS_PYTHON");
+    if (m_pythonOverride.isEmpty()) {
+        m_pythonOverride = qEnvironmentVariable("PARLOCUE_TTS_PYTHON");
+        if (m_pythonOverride.isEmpty())
+            m_pythonOverride = qEnvironmentVariable("RECITE_TTS_PYTHON");
+    }
 
     // Defer environment check cleanly unless in tests/CLI that call it synchronously.
     checkEnvironment();
@@ -489,6 +492,7 @@ QString Backend::resolveTtsPython() const {
         return m_pythonOverride;
 
     const QStringList candidates = {
+        QDir::homePath() + "/.local/share/parlocue/venv/bin/python",
         QDir::homePath() + "/.local/share/recite/venv/bin/python",
         QDir::homePath() + "/.local/share/pipx/venvs/edge-tts/bin/python",
         QStandardPaths::findExecutable("python3")
@@ -546,7 +550,7 @@ void Backend::installTts() {
     m_workMessage = tr("Installing edge-tts voice engine…");
     emit workChanged();
 
-    const QString venvDir = QDir::homePath() + "/.local/share/recite/venv";
+    const QString venvDir = QDir::homePath() + "/.local/share/parlocue/venv";
     auto *proc = new QProcess(this);
     m_exportProc = proc;
     const QString cmd = QStringLiteral("python3 -m venv '%1' && '%1/bin/pip' install --upgrade edge-tts")
@@ -1260,8 +1264,8 @@ bool Backend::saveToFile(const QString &path, QString *errorOut) {
 
 void Backend::openProjectDialog() {
     const QList<FileFilter> filters = {
-        {tr("Recite & Script Files"), {"*.recite", "*.txt"}},
-        {tr("Recite Projects (*.recite)"), {"*.recite"}},
+        {tr("ParloCue & Script Files"), {"*.parlocue", "*.recite", "*.txt"}},
+        {tr("ParloCue Projects (*.parlocue; *.recite)"), {"*.parlocue", "*.recite"}},
         {tr("Text Scripts (*.txt)"), {"*.txt"}}
     };
     m_picker->openFile(tr("Open Script Project"), filters, [this](const QString &path) {
@@ -1271,15 +1275,15 @@ void Backend::openProjectDialog() {
 }
 
 void Backend::saveProjectDialog() {
-    const QString suggested = sanitizeFilePart(m_title) + ".recite";
+    const QString suggested = sanitizeFilePart(m_title) + ".parlocue";
     const QList<FileFilter> filters = {
-        {tr("Recite Projects (*.recite)"), {"*.recite"}}
+        {tr("ParloCue Projects (*.parlocue)"), {"*.parlocue"}}
     };
     m_picker->saveFile(tr("Save Script Project"), suggested, filters, [this](const QString &path) {
         if (path.isEmpty()) return;
         QString out = path;
-        if (!out.endsWith(".recite", Qt::CaseInsensitive))
-            out += ".recite";
+        if (!out.endsWith(".parlocue", Qt::CaseInsensitive) && !out.endsWith(".recite", Qt::CaseInsensitive))
+            out += ".parlocue";
         saveToFile(out);
     });
 }

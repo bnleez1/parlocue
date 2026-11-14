@@ -1,7 +1,7 @@
 QT += core gui qml quick quickcontrols2 dbus multimedia
 
 CONFIG += c++17 release
-TARGET = recite
+TARGET = parlocue
 TEMPLATE = app
 
 HEADERS += \

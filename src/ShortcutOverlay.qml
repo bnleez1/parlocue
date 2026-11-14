@@ -24,13 +24,13 @@ Popup {
         { keys: "Ctrl+Enter", desc: qsTr("Play selected line") },
         { keys: "Ctrl+I", desc: qsTr("Paste or import a script") },
         { keys: "Ctrl+L", desc: qsTr("Add a new line after selection") },
-        { keys: "Ctrl+O", desc: qsTr("Open project (.recite or .txt)") },
+        { keys: "Ctrl+O", desc: qsTr("Open project (.parlocue, .recite, or .txt)") },
         { keys: "Ctrl+S / Ctrl+Shift+S", desc: qsTr("Save / Save As") },
         { keys: "Ctrl+E", desc: qsTr("Export combined MP3 or clips") },
         { keys: "Ctrl+Z / Ctrl+Shift+Z", desc: qsTr("Undo / Redo") },
         { keys: "Esc", desc: qsTr("Cancel active audio generation or close dialog") },
         { keys: "? / F1", desc: qsTr("Show or hide keyboard shortcuts") },
-        { keys: "Q / Ctrl+Q", desc: qsTr("Quit Recite") }
+        { keys: "Q / Ctrl+Q", desc: qsTr("Quit ParloCue") }
     ]
 
     contentItem: ColumnLayout {
