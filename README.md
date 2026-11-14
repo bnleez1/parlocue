@@ -58,6 +58,8 @@ cd recite
 
 Launch the desktop application from your app launcher or terminal (`recite`), or run the built binary directly (`./build/recite`).
 
+See the full **[User Manual](docs/USER_MANUAL.md)** for a step-by-step guide to script formatting, speaker/voice controls, line overrides, MP3 exporting, and troubleshooting.
+
 ### Keyboard Shortcuts
 
 | Shortcut | Action |
