@@ -11,7 +11,7 @@ Built using Vibe Code on Omarchy OS.
 ## Features
 
 - **Same Clipchamp Voices**: Browse, filter, favorite, and audition Microsoft Neural Voices (`Jenny`, `Guy`, `Aria`, `Davis`, `Sonia`, `Ryan`, etc.) across locales and accents.
-- **Lectures & Multi-Speaker Dialogues**: Paste raw scripts (`Narrator:`, `Student:`, `Advisor:`, `[pause 1.5s]`) or write line-by-line with automatic speaker voice assignment.
+- **Lectures & Multi-Speaker Dialogues**: Paste raw scripts (`Narrator:`, `Student:`, `Advisor:`, `[pause 1.5s]`) or write line-by-line with automatic speaker voice assignment and one-click dialect randomization across English accents.
 - **Voice, Speed, Pitch & Pauses**: Adjust rate (`-50%` to `+100%`), pitch (`-50Hz` to `+50Hz`), and pause duration per speaker or per line.
 - **Instant Caching & Preview**: Preview individual lines or the full stitched script with live line highlighting.
 - **Export for Direct Use or Kdenlive**: Export a single combined `.mp3` with exact pauses (plus optional `-14 LUFS` loudness normalization) and/or numbered per-line `.mp3` clips (`001_Narrator.mp3`, `002_Student.mp3`, …).
