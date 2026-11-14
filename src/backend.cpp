@@ -760,7 +760,7 @@ QString Backend::buildFfmpegFilterScript(const QVector<int> &pauseMsPerClip, boo
     }
 
     if (normalize) {
-        parts.append(QStringLiteral("%1concat=n=%2:v=0:a=1[joined];[joined]loudnorm=I=-16:TP=-1.5:LRA=11[out]")
+        parts.append(QStringLiteral("%1concat=n=%2:v=0:a=1[joined];[joined]loudnorm=I=-14:TP=-1.5:LRA=11[out]")
                          .arg(concatInputs.join(QString()))
                          .arg(pauseMsPerClip.size()));
     } else {

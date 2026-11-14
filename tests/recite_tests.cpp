@@ -114,7 +114,7 @@ private slots:
         const QString filter = Backend::buildFfmpegFilterScript({600, 1000}, true);
         QVERIFY(filter.contains("apad=pad_dur=0.600"));
         QVERIFY(filter.contains("concat=n=2:v=0:a=1"));
-        QVERIFY(filter.contains("loudnorm="));
+        QVERIFY(filter.contains("loudnorm=I=-14:"));
     }
 
     void endToEndFakeTtsExportCombinedAndClips()

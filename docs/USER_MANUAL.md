@@ -172,7 +172,7 @@ Click **Export MP3…** (or press **`Ctrl+E`**) to open **Export Audio**:
    - **Individual `.mp3` clips per line (for Kdenlive)**: Exports numbered per-line files into a folder (`001_Narrator.mp3`, `002_Student.mp3`, …).
    - **Both combined `.mp3` and individual clips**: Prompts for both output locations and exports both in one pass.
 2. **MP3 Bitrate**: `128 kbps`, `192 kbps` (default), or `320 kbps` (encoded at 44.1 kHz stereo via `libmp3lame`).
-3. **Normalize loudness (`-16 LUFS`)**: Available when exporting a combined `.mp3`; applies an `ffmpeg` `loudnorm` pass (`I=-16:TP=-1.5:LRA=11`) for consistent classroom/Listening I/TOEFL volume.
+3. **Normalize loudness (`-14 LUFS`)**: Available when exporting a combined `.mp3`; applies an `ffmpeg` `loudnorm` pass (`I=-14:TP=-1.5:LRA=11`), optimal for YouTube and consistent playback volume.
 
 ---
 

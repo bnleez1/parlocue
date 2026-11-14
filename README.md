@@ -14,7 +14,7 @@ Built using Vibe Code on Omarchy OS.
 - **Lectures & Multi-Speaker Dialogues**: Paste raw scripts (`Narrator:`, `Student:`, `Advisor:`, `[pause 1.5s]`) or write line-by-line with automatic speaker voice assignment.
 - **Voice, Speed, Pitch & Pauses**: Adjust rate (`-50%` to `+100%`), pitch (`-50Hz` to `+50Hz`), and pause duration per speaker or per line.
 - **Instant Caching & Preview**: Preview individual lines or the full stitched script with live line highlighting.
-- **Export for Direct Use or Kdenlive**: Export a single combined `.mp3` with exact pauses (plus optional `-16 LUFS` loudness normalization) and/or numbered per-line `.mp3` clips (`001_Narrator.mp3`, `002_Student.mp3`, …).
+- **Export for Direct Use or Kdenlive**: Export a single combined `.mp3` with exact pauses (plus optional `-14 LUFS` loudness normalization) and/or numbered per-line `.mp3` clips (`001_Narrator.mp3`, `002_Student.mp3`, …).
 - **Save & Reopen Projects**: Save script projects as `.recite` files or import `.txt` scripts.
 
 ---

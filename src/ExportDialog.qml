@@ -77,7 +77,7 @@ Dialog {
 
         CheckBox {
             visible: root.exportMode !== 1
-            text: qsTr("Normalize loudness (-16 LUFS, recommended for class audio)")
+            text: qsTr("Normalize loudness (-14 LUFS, optimal for YouTube)")
             checked: root.normalizeLoudness
             onToggled: root.normalizeLoudness = checked
         }
