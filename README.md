@@ -4,6 +4,10 @@
 
 Turn audio scripts for **Listening I** and **TOEFL** practice into spoken `.mp3` files using Clipchamp's Microsoft Neural Voices (`edge-tts`) — without copying lines one by one or stitching clips manually in Kdenlive.
 
+Built using Vibe Code on Omarchy OS.
+
+---
+
 ## Features
 
 - **Same Clipchamp Voices**: Browse, filter, favorite, and audition Microsoft Neural Voices (`Jenny`, `Guy`, `Aria`, `Davis`, `Sonia`, `Ryan`, etc.) across locales and accents.
@@ -13,7 +17,48 @@ Turn audio scripts for **Listening I** and **TOEFL** practice into spoken `.mp3`
 - **Export for Direct Use or Kdenlive**: Export a single combined `.mp3` with exact pauses (plus optional `-16 LUFS` loudness normalization) and/or numbered per-line `.mp3` clips (`001_Narrator.mp3`, `002_Student.mp3`, …).
 - **Save & Reopen Projects**: Save script projects as `.recite` files or import `.txt` scripts.
 
-## Keyboard Shortcuts
+---
+
+## Prerequisites
+
+Before installing and running this application, ensure your system meets the following requirements:
+
+- **Operating System:** Omarchy OS (or compatible Arch-based Linux distribution)
+- **Runtime Dependencies:** `qt6-base`, `qt6-declarative`, `qt6-multimedia`, `qt6-wayland`, `ffmpeg`, `python`, `xdg-desktop-portal` (plus the `edge-tts` Python package, which can also be installed from within the app)
+- **Build Dependencies:** `gcc`, `make`, `qmake6` (included in `qt6-base`)
+- **Git**
+
+---
+
+## Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/bnleez1/recite.git
+cd recite
+```
+
+2. Build and run tests:
+
+```bash
+./bin/build
+./bin/test
+```
+
+3. Install the Arch package (`pkgbuild/PKGBUILD`):
+
+```bash
+./bin/install
+```
+
+---
+
+## Usage
+
+Launch the desktop application from your app launcher or terminal (`recite`), or run the built binary directly (`./build/recite`).
+
+### Keyboard Shortcuts
 
 | Shortcut | Action |
 | --- | --- |
@@ -26,19 +71,10 @@ Turn audio scripts for **Listening I** and **TOEFL** practice into spoken `.mp3`
 | `Ctrl+S` / `Ctrl+Shift+S` | Save / Save As |
 | `Ctrl+E` | Export combined `.mp3` or individual clips |
 | `Ctrl+Z` / `Ctrl+Shift+Z` | Undo / Redo |
-| `Esc` | Cancel active generation or stop playback |
 | `?` / `F1` | Show keyboard shortcuts |
 | `Q` / `Ctrl+Q` | Quit |
 
-## Build, Test & Install
-
-```sh
-./bin/build
-./bin/test
-./bin/install
-```
-
-## CLI & Agent Usage
+### CLI & Agent Usage
 
 ```sh
 recite check [script.recite] --json
@@ -46,3 +82,21 @@ recite voices --locale en-US --json
 recite export lesson.recite --output lesson.mp3 --clips-dir ./clips --json
 recite skill install
 ```
+
+---
+
+## Contributing
+
+Contributions are welcome! To keep the project aligned with its core goals, direct push access to the `main` branch is restricted. Please follow the pull request workflow:
+
+1. Fork the repository.
+2. Create a new feature branch (`git checkout -b feature/your-feature-name`).
+3. Commit your changes (`git commit -m "Add description of your changes"`).
+4. Push to your branch (`git push origin feature/your-feature-name`).
+5. Open a Pull Request for review and testing.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
