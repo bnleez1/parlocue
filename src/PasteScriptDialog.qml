@@ -14,6 +14,7 @@ Dialog {
 
     property bool detectSpeakers: true
     property bool replaceExisting: true
+    property bool randomizeVoices: false
     property var previewData: ({ lineCount: 0, speakerCount: 0, speakers: [] })
 
     function refreshPreview() {
@@ -155,6 +156,13 @@ Dialog {
         RowLayout {
             Layout.fillWidth: true
             spacing: 10
+
+            CheckBox {
+                text: qsTr("Randomize voices (varied accents)")
+                checked: root.randomizeVoices
+                onToggled: root.randomizeVoices = checked
+            }
+
             Item { Layout.fillWidth: true }
 
             Button {
@@ -174,7 +182,7 @@ Dialog {
                     const spId = backend.speakerModel.rowCount() > idx
                         ? backend.speakerModel.data(backend.speakerModel.index(idx, 0), Qt.UserRole + 1)
                         : ""
-                    backend.importScriptText(scriptInput.text, root.detectSpeakers, spId, root.replaceExisting)
+                    backend.importScriptText(scriptInput.text, root.detectSpeakers, spId, root.replaceExisting, root.randomizeVoices)
                     root.close()
                 }
             }

@@ -118,6 +118,7 @@ You can type lines directly in the timeline or import formatted text via **Paste
 - **Auto-detect speakers (`Name: text`)**: Automatically creates and maps speakers found in the text.
 - **Default speaker**: Speaker assigned to lines that have no prefix (or all lines if auto-detection is turned off).
 - **Replace current script**: Checked replaces the existing timeline; unchecked appends the imported lines (`Append Lines`).
+- **Randomize voices (varied accents)**: Automatically assigns distinct English voices across different dialects/accents to the imported speakers (respecting gender hints like `Man:` or `Female Student:` when present).
 - A live preview pill shows how many lines and speakers were detected before importing.
 
 ---
@@ -134,7 +135,8 @@ You can type lines directly in the timeline or import formatted text via **Paste
    - **Gender**: `All`, `Female`, or `Male`.
    - **Favorites (`★`)**: Star voices to filter down to your go-to cast later.
 4. Click **Sample** to audition a voice, or **Use** to assign it to the speaker.
-5. Click **Refresh** to fetch the full online Microsoft Neural Voice catalog (Recite includes 18 English voices built in and caches refreshed lists locally).
+5. Click **Refresh** to fetch the full online Microsoft Neural Voice catalog (Recite includes 18 English voices built in and caches refreshed lists locally—47 English voices across 14 accents/dialects when refreshed).
+6. Click **Randomize** in the **Speakers & Voices** header at any time to assign fresh, varied-dialect English voices to all speakers in your script (undoable with `Ctrl+Z`).
 
 ### Adjusting Delivery
 

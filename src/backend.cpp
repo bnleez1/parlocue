@@ -12,8 +12,10 @@
 #include <QJsonObject>
 #include <QMediaPlayer>
 #include <QProcess>
+#include <QRandomGenerator>
 #include <QRegularExpression>
 #include <QSaveFile>
+#include <QSet>
 #include <QStandardPaths>
 #include <QTemporaryFile>
 #include <QTimer>
@@ -898,19 +900,94 @@ QString Backend::nextSpeakerColor(int index) const {
     return kSpeakerPalette.at(index % kSpeakerPalette.size());
 }
 
-QString Backend::pickVoiceForSpeakerName(const QString &name, int existingCount) const {
+QString inferGenderHint(const QString &name) {
     const QString lower = name.toLower();
     static const QRegularExpression maleHints(
         R"(\b(man|male|boy|mr|sir|father|dad|brother|uncle|king|guy|adam|john|david|mark|alex|kevin|sam)\b)");
     static const QRegularExpression femaleHints(
         R"(\b(woman|female|girl|ms|mrs|miss|madam|mother|mom|sister|aunt|queen|sarah|emily|anna|lisa|mary|kate|emma|jenny)\b)");
     if (maleHints.match(lower).hasMatch())
-        return kMaleVoices.at(existingCount % kMaleVoices.size());
+        return QStringLiteral("Male");
     if (femaleHints.match(lower).hasMatch())
+        return QStringLiteral("Female");
+    return {};
+}
+
+QString Backend::pickVoiceForSpeakerName(const QString &name, int existingCount) const {
+    const QString gender = inferGenderHint(name);
+    if (gender == QLatin1String("Male"))
+        return kMaleVoices.at(existingCount % kMaleVoices.size());
+    if (gender == QLatin1String("Female"))
         return kFemaleVoices.at(existingCount % kFemaleVoices.size());
     if (existingCount % 2 == 0)
         return kFemaleVoices.at((existingCount / 2) % kFemaleVoices.size());
     return kMaleVoices.at((existingCount / 2) % kMaleVoices.size());
+}
+
+QString Backend::voiceLocale(const QString &shortName) const {
+    for (const auto &v : m_voiceModel.allVoices()) {
+        if (v.shortName == shortName)
+            return v.locale;
+    }
+    const QStringList parts = shortName.split('-');
+    if (parts.size() >= 2)
+        return parts.at(0) + '-' + parts.at(1);
+    return {};
+}
+
+QString Backend::pickRandomVoice(const QString &speakerName, const QSet<QString> &usedVoices,
+                                 const QSet<QString> &usedLocales, const QString &avoidVoice) const {
+    QVector<VoiceEntry> pool;
+    for (const auto &v : m_voiceModel.allVoices()) {
+        if (v.locale.startsWith(QLatin1String("en-"), Qt::CaseInsensitive)
+            || v.locale.compare(QLatin1String("en"), Qt::CaseInsensitive) == 0) {
+            pool.append(v);
+        }
+    }
+    if (pool.isEmpty())
+        pool = m_voiceModel.allVoices();
+    if (pool.isEmpty())
+        return QStringLiteral("en-US-JennyNeural");
+
+    const QString gender = inferGenderHint(speakerName);
+    if (!gender.isEmpty()) {
+        QVector<VoiceEntry> genderMatches;
+        for (const auto &v : pool) {
+            if (v.gender.compare(gender, Qt::CaseInsensitive) == 0)
+                genderMatches.append(v);
+        }
+        if (!genderMatches.isEmpty())
+            pool = genderMatches;
+    }
+
+    auto filterOut = [](const QVector<VoiceEntry> &in, const auto &pred) {
+        QVector<VoiceEntry> out;
+        for (const auto &v : in) {
+            if (pred(v))
+                out.append(v);
+        }
+        return out.isEmpty() ? in : out;
+    };
+
+    if (!avoidVoice.isEmpty())
+        pool = filterOut(pool, [&](const VoiceEntry &v) { return v.shortName != avoidVoice; });
+
+    pool = filterOut(pool, [&](const VoiceEntry &v) { return !usedVoices.contains(v.shortName); });
+    pool = filterOut(pool, [&](const VoiceEntry &v) { return !usedLocales.contains(v.locale); });
+
+    // Pick uniformly by dialect/locale first so every English accent has equal chance.
+    QStringList locales;
+    for (const auto &v : pool) {
+        if (!locales.contains(v.locale))
+            locales.append(v.locale);
+    }
+    const QString chosenLocale = locales.at(QRandomGenerator::global()->bounded(locales.size()));
+    QVector<VoiceEntry> localePool;
+    for (const auto &v : pool) {
+        if (v.locale == chosenLocale)
+            localePool.append(v);
+    }
+    return localePool.at(QRandomGenerator::global()->bounded(localePool.size())).shortName;
 }
 
 const Speaker *Backend::speakerById(const QString &id) const {
@@ -1453,6 +1530,30 @@ void Backend::setSpeakerVoice(int index, const QString &shortName) {
     markDirty();
 }
 
+void Backend::randomizeSpeakerVoices() {
+    auto speakers = m_speakerModel.items();
+    if (speakers.isEmpty())
+        return;
+
+    pushUndoSnapshot();
+    QSet<QString> usedVoices;
+    QSet<QString> usedLocales;
+    for (auto &sp : speakers) {
+        sp.voice = pickRandomVoice(sp.name, usedVoices, usedLocales, sp.voice);
+        usedVoices.insert(sp.voice);
+        const QString loc = voiceLocale(sp.voice);
+        if (!loc.isEmpty())
+            usedLocales.insert(loc);
+    }
+
+    m_speakerModel.setSpeakers(speakers);
+    m_lineModel.setSpeakers(&m_speakerModel.items());
+    m_lineModel.notifySpeakerChanged();
+    updateClipStatesFromCache();
+    markDirty();
+    emit selectedSpeakerChanged();
+}
+
 void Backend::setSpeakerRate(int index, int rate) {
     auto &speakers = m_speakerModel.items();
     if (index < 0 || index >= speakers.size()) return;
@@ -1569,7 +1670,8 @@ QVariantMap Backend::parseScriptPreview(const QString &rawText, bool detectSpeak
 }
 
 void Backend::importScriptText(const QString &rawText, bool detectSpeakers,
-                               const QString &fallbackSpeakerId, bool replaceExisting) {
+                               const QString &fallbackSpeakerId, bool replaceExisting,
+                               bool randomizeVoices) {
     const QVariantMap preview = parseScriptPreview(rawText, detectSpeakers, fallbackSpeakerId);
     const QVariantList parsedLines = preview.value("lines").toList();
     if (parsedLines.isEmpty())
@@ -1578,6 +1680,7 @@ void Backend::importScriptText(const QString &rawText, bool detectSpeakers,
     pushUndoSnapshot();
 
     QVector<Speaker> speakers = m_speakerModel.items();
+    QSet<QString> newlyAddedIds;
     auto findOrAddSpeaker = [&](const QString &name) -> QString {
         for (const auto &s : speakers) {
             if (s.name.compare(name, Qt::CaseInsensitive) == 0)
@@ -1590,6 +1693,7 @@ void Backend::importScriptText(const QString &rawText, bool detectSpeakers,
         sp.defaultPauseMs = m_defaultPauseMs;
         sp.color = nextSpeakerColor(speakers.size());
         speakers.append(sp);
+        newlyAddedIds.insert(sp.id);
         return sp.id;
     };
 
@@ -1598,14 +1702,41 @@ void Backend::importScriptText(const QString &rawText, bool detectSpeakers,
     if (!replaceExisting && lines.size() == 1 && lines.first().text.trimmed().isEmpty())
         lines.clear();
 
+    QSet<QString> importedSpeakerIds;
     for (const auto &v : parsedLines) {
         const QVariantMap m = v.toMap();
         ScriptLine line;
         line.id = newId("l");
         line.speakerId = findOrAddSpeaker(m.value("speaker").toString());
+        importedSpeakerIds.insert(line.speakerId);
         line.text = m.value("text").toString();
         line.pauseMs = m.value("pauseMs", m_defaultPauseMs).toInt();
         lines.append(line);
+    }
+
+    if (randomizeVoices) {
+        const QSet<QString> &targetIds = replaceExisting ? importedSpeakerIds : newlyAddedIds;
+        QSet<QString> usedVoices;
+        QSet<QString> usedLocales;
+        if (!replaceExisting) {
+            for (const auto &sp : speakers) {
+                if (!targetIds.contains(sp.id)) {
+                    usedVoices.insert(sp.voice);
+                    const QString loc = voiceLocale(sp.voice);
+                    if (!loc.isEmpty())
+                        usedLocales.insert(loc);
+                }
+            }
+        }
+        for (auto &sp : speakers) {
+            if (!targetIds.contains(sp.id))
+                continue;
+            sp.voice = pickRandomVoice(sp.name, usedVoices, usedLocales);
+            usedVoices.insert(sp.voice);
+            const QString loc = voiceLocale(sp.voice);
+            if (!loc.isEmpty())
+                usedLocales.insert(loc);
+        }
     }
 
     m_speakerModel.setSpeakers(speakers);

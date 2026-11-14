@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QPointer>
 #include <QProcess>
+#include <QSet>
 #include <QString>
 #include <QStringList>
 #include <QVariantList>
@@ -310,6 +311,7 @@ public:
     Q_INVOKABLE void removeSpeaker(int index);
     Q_INVOKABLE void setSpeakerName(int index, const QString &name);
     Q_INVOKABLE void setSpeakerVoice(int index, const QString &shortName);
+    Q_INVOKABLE void randomizeSpeakerVoices();
     Q_INVOKABLE void setSpeakerRate(int index, int rate);
     Q_INVOKABLE void setSpeakerPitch(int index, int pitch);
     Q_INVOKABLE void setSpeakerDefaultPause(int index, int pauseMs);
@@ -324,7 +326,8 @@ public:
     Q_INVOKABLE QVariantMap parseScriptPreview(const QString &rawText, bool detectSpeakers,
                                                const QString &fallbackSpeakerId = {}) const;
     Q_INVOKABLE void importScriptText(const QString &rawText, bool detectSpeakers,
-                                      const QString &fallbackSpeakerId, bool replaceExisting);
+                                      const QString &fallbackSpeakerId, bool replaceExisting,
+                                      bool randomizeVoices = false);
 
     // Playback & synthesis
     Q_INVOKABLE void playLine(int index);
@@ -412,6 +415,9 @@ private:
     const Speaker *speakerById(const QString &id) const;
     Speaker *mutableSpeakerById(const QString &id);
     QString pickVoiceForSpeakerName(const QString &name, int existingCount) const;
+    QString pickRandomVoice(const QString &speakerName, const QSet<QString> &usedVoices,
+                            const QSet<QString> &usedLocales, const QString &avoidVoice = {}) const;
+    QString voiceLocale(const QString &shortName) const;
     QString nextSpeakerColor(int index) const;
     QString newId(const QString &prefix);
 

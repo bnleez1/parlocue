@@ -72,6 +72,59 @@ private slots:
         QVERIFY(backend.wordCount() >= 20);
     }
 
+    void randomizeVoicesAcrossDialectsAndImport()
+    {
+        QTemporaryDir cacheDir;
+        FakeFilePicker picker;
+        Backend backend(&picker, cacheDir.path(), "/nonexistent/python");
+
+        const QString script =
+            "Narrator: Welcome.\n"
+            "Man: Hello from the first speaker.\n"
+            "Woman: Hello from the second speaker.\n"
+            "Guest: Hello from the third speaker.\n";
+
+        backend.importScriptText(script, true, {}, true, true);
+        QCOMPARE(backend.speakerModel()->rowCount(), 4);
+
+        QSet<QString> initialVoices;
+        QSet<QString> initialLocales;
+        const auto &speakers = backend.speakerModel()->items();
+        for (const auto &sp : speakers) {
+            QVERIFY(sp.voice.startsWith("en-"));
+            initialVoices.insert(sp.voice);
+            initialLocales.insert(sp.voice.section('-', 0, 1));
+        }
+        // 4 speakers should get 4 distinct voices across all 4 built-in English locales.
+        QCOMPARE(initialVoices.size(), 4);
+        QCOMPARE(initialLocales.size(), 4);
+
+        // Gender hints should be respected for Man / Woman.
+        QString manVoice;
+        QString womanVoice;
+        for (const auto &sp : speakers) {
+            if (sp.name == "Man") manVoice = sp.voice;
+            if (sp.name == "Woman") womanVoice = sp.voice;
+        }
+        for (const auto &v : backend.voiceModel()->allVoices()) {
+            if (v.shortName == manVoice) QCOMPARE(v.gender, QString("Male"));
+            if (v.shortName == womanVoice) QCOMPARE(v.gender, QString("Female"));
+        }
+
+        // Randomizing all speakers updates voices and supports undo.
+        const QString firstBefore = speakers.first().voice;
+        backend.randomizeSpeakerVoices();
+        const auto &after = backend.speakerModel()->items();
+        QSet<QString> rerolledVoices;
+        for (const auto &sp : after)
+            rerolledVoices.insert(sp.voice);
+        QCOMPARE(rerolledVoices.size(), 4);
+        QVERIFY(after.first().voice != firstBefore);
+
+        backend.undo();
+        QCOMPARE(backend.speakerModel()->items().first().voice, firstBefore);
+    }
+
     void undoRedoAndProjectSaveLoad()
     {
         QTemporaryDir cacheDir;

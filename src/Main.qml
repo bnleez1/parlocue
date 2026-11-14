@@ -786,6 +786,12 @@ ApplicationWindow {
                                 Layout.fillWidth: true
                             }
                             Button {
+                                text: qsTr("Randomize")
+                                flat: true
+                                Material.roundedScale: Math.min(4, theme.radius)
+                                onClicked: backend.randomizeSpeakerVoices()
+                            }
+                            Button {
                                 text: qsTr("+ Add")
                                 flat: true
                                 Material.foreground: theme.accent
