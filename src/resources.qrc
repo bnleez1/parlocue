@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="Main.qml">Main.qml</file>
+        <file alias="PasteScriptDialog.qml">PasteScriptDialog.qml</file>
+        <file alias="VoicePickerDialog.qml">VoicePickerDialog.qml</file>
+        <file alias="ExportDialog.qml">ExportDialog.qml</file>
+        <file alias="ShortcutOverlay.qml">ShortcutOverlay.qml</file>
+        <file alias="tts_bridge.py">tts_bridge.py</file>
+        <file alias="skill/SKILL.md">skill/SKILL.md</file>
+        <file alias="i18n/en.json">i18n/en.json</file>
+        <file alias="i18n/da.json">i18n/da.json</file>
+    </qresource>
+</RCC>

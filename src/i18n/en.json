@@ -1,0 +1,5 @@
+{
+  "%n lines": { "one": "%n line", "other": "%n lines" },
+  "%n words": { "one": "%n word", "other": "%n words" },
+  "%n voices available": { "one": "%n voice available", "other": "%n voices available" }
+}

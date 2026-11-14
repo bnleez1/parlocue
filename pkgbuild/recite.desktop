@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Recite
+Name[da]=Recite
+Comment=Turn audio scripts into multi-voice MP3s
+Comment[da]=Lav lydmanuskripter til MP3-filer med flere stemmer
+Exec=recite %f
+Icon=recite
+Terminal=false
+Categories=AudioVideo;Audio;Education;Utility;
+StartupWMClass=recite
