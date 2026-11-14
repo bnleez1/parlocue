@@ -2,7 +2,7 @@
 
 ![Recite](screenshot.png)
 
-Turn audio scripts for **Listening I** and **TOEFL** practice into spoken `.mp3` files using Clipchamp's Microsoft Neural Voices (`edge-tts`) — without copying lines one by one or stitching clips manually in Kdenlive.
+Turn audio scripts for English listening and dialogue practice into spoken `.mp3` files using neural text-to-speech voices (`edge-tts`) — without copying lines one by one or stitching clips manually in Kdenlive.
 
 Built using Vibe Code on Omarchy OS.
 
@@ -10,7 +10,7 @@ Built using Vibe Code on Omarchy OS.
 
 ## Features
 
-- **Same Clipchamp Voices**: Browse, filter, favorite, and audition Microsoft Neural Voices (`Jenny`, `Guy`, `Aria`, `Davis`, `Sonia`, `Ryan`, etc.) across locales and accents.
+- **Neural Voices Across Dialects**: Browse, filter, favorite, and audition English and multilingual neural voices (`Jenny`, `Guy`, `Aria`, `Davis`, `Sonia`, `Ryan`, etc.) across 14+ English locales and accents.
 - **Lectures & Multi-Speaker Dialogues**: Paste raw scripts (`Narrator:`, `Student:`, `Advisor:`, `[pause 1.5s]`) or write line-by-line with automatic speaker voice assignment and one-click dialect randomization across English accents.
 - **Voice, Speed, Pitch & Pauses**: Adjust rate (`-50%` to `+100%`), pitch (`-50Hz` to `+50Hz`), and pause duration per speaker or per line.
 - **Instant Caching & Preview**: Preview individual lines or the full stitched script with live line highlighting.
@@ -99,6 +99,10 @@ Contributions are welcome! To keep the project aligned with its core goals, dire
 
 ---
 
-## License
+## License & Third-Party Notices
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+- **Adapted Patterns:** Theming, translation, and portal file-picker patterns are adapted from Omacut and Monologue (Copyright © David Heinemeier Hansson, MIT License).
+- **External Dependencies:** Recite invokes system-installed [Qt 6](https://www.qt.io/), [FFmpeg](https://ffmpeg.org/), and the third-party [`edge-tts`](https://github.com/rany2/edge-tts) Python package as external tools rather than bundling them.
+- **Disclaimer:** Recite is an independent open-source project and is not affiliated with, endorsed by, or sponsored by Microsoft. Voice synthesis relies on Microsoft's online Edge Read Aloud service via `edge-tts`; users are responsible for complying with applicable service terms and copyright laws for any scripts they input or audio they distribute.

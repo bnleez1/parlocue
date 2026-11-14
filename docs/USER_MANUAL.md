@@ -1,6 +1,6 @@
 # Recite User Manual
 
-Recite turns lecture and dialogue scripts into spoken `.mp3` audio using Microsoft Neural Voices (`edge-tts`)—the same neural voices available in Clipchamp—without copying lines one by one or stitching clips manually.
+Recite turns lecture and dialogue scripts into spoken `.mp3` audio using neural text-to-speech voices (`edge-tts`), without copying lines one by one or stitching clips manually.
 
 ---
 
