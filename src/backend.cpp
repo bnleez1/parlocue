@@ -2133,9 +2133,11 @@ void Backend::finishBatchSynthesis() {
     emit workChanged();
 
     // Check if any requested lines failed.
-    for (const auto &line : m_lineModel.items()) {
-        if (line.clipState == "error") {
-            setBanner(tr("Audio synthesis failed: %1").arg(line.clipError.left(180)), true);
+    const auto &lines = m_lineModel.items();
+    for (int i = 0; i < lines.size(); ++i) {
+        if (lines.at(i).clipState == "error") {
+            setSelectedLineIndex(i);
+            setBanner(tr("Line %1 synthesis failed: %2").arg(i + 1).arg(lines.at(i).clipError.left(180)), true);
             m_pendingAction = PendingAction::None;
             m_pendingSinglePlayLine = -1;
             return;

@@ -57,11 +57,25 @@ async def cmd_synthesize(edge_tts, text_file, voice, rate, pitch, out_path):
         raise ValueError("Cannot synthesize empty text")
 
     tmp_path = out_path + ".part"
-    communicate = edge_tts.Communicate(text, voice, rate=rate, pitch=pitch)
-    await communicate.save(tmp_path)
-    if not os.path.exists(tmp_path) or os.path.getsize(tmp_path) == 0:
-        raise RuntimeError("edge-tts produced an empty audio file")
-    os.replace(tmp_path, out_path)
+    last_exc = None
+    for attempt in range(3):
+        try:
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+            communicate = edge_tts.Communicate(text, voice, rate=rate, pitch=pitch)
+            await communicate.save(tmp_path)
+            if os.path.exists(tmp_path) and os.path.getsize(tmp_path) > 0:
+                os.replace(tmp_path, out_path)
+                return
+            last_exc = RuntimeError("edge-tts produced an empty audio file")
+        except Exception as exc:
+            last_exc = exc
+        if attempt < 2:
+            await asyncio.sleep(0.8 * (attempt + 1))
+
+    if os.path.exists(tmp_path):
+        os.remove(tmp_path)
+    raise last_exc
 
 
 def cmd_extract_docx(path):
