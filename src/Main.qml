@@ -711,6 +711,50 @@ ApplicationWindow {
                                         }
                                     }
 
+                                    // Voice Picker Pill (reassign speaker's neural voice directly from left column)
+                                    Rectangle {
+                                        Layout.preferredHeight: 26
+                                        Layout.preferredWidth: voicePillRow.implicitWidth + 14
+                                        radius: Math.min(4, theme.radius)
+                                        color: voicePillMouse.containsMouse ? theme.buttonHover : theme.surfacePill
+                                        border.color: theme.border
+                                        border.width: 1
+
+                                        RowLayout {
+                                            id: voicePillRow
+                                            anchors.centerIn: parent
+                                            spacing: 4
+
+                                            Label {
+                                                text: model.speakerVoiceDisplay
+                                                font.pixelSize: 11
+                                                color: theme.textSecondary
+                                            }
+                                            Label {
+                                                text: "▾"
+                                                font.pixelSize: 10
+                                                color: theme.textMuted
+                                            }
+                                        }
+
+                                        MouseArea {
+                                            id: voicePillMouse
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                            cursorShape: Qt.PointingHandCursor
+                                            onClicked: {
+                                                const spIdx = backend.speakerIndexForId(model.speakerId)
+                                                if (spIdx >= 0) {
+                                                    backend.selectedLineIndex = index
+                                                    backend.selectedSpeakerIndex = spIdx
+                                                    voicePicker.targetSpeakerIndex = spIdx
+                                                    voicePicker.currentVoice = model.speakerVoice || ""
+                                                    voicePicker.open()
+                                                }
+                                            }
+                                        }
+                                    }
+
                                     // Play Line Button
                                     CompactBtn {
                                         text: (backend.playing && !backend.playingFullScript && backend.playingLineIndex === index)

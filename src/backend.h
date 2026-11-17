@@ -101,6 +101,8 @@ public:
         SpeakerIdRole,
         SpeakerNameRole,
         SpeakerColorRole,
+        SpeakerVoiceRole,
+        SpeakerVoiceDisplayRole,
         TextRole,
         PauseMsRole,
         HasRateOverrideRole,
@@ -318,6 +320,7 @@ public:
     Q_INVOKABLE void setSpeakerRate(int index, int rate);
     Q_INVOKABLE void setSpeakerPitch(int index, int pitch);
     Q_INVOKABLE void setSpeakerDefaultPause(int index, int pauseMs);
+    Q_INVOKABLE int speakerIndexForId(const QString &speakerId) const;
 
     // Voice catalog & sampling
     Q_INVOKABLE void refreshVoices();

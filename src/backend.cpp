@@ -198,6 +198,8 @@ QVariant ScriptLineModel::data(const QModelIndex &index, int role) const {
     case SpeakerIdRole: return l.speakerId;
     case SpeakerNameRole: return sp ? sp->name : QStringLiteral("Speaker");
     case SpeakerColorRole: return sp ? sp->color : QStringLiteral("#FFD60A");
+    case SpeakerVoiceRole: return sp ? sp->voice : QString();
+    case SpeakerVoiceDisplayRole: return sp ? cleanDisplayName(sp->voice, {}) : QString();
     case TextRole: return l.text;
     case PauseMsRole: return l.pauseMs;
     case HasRateOverrideRole: return l.hasRateOverride;
@@ -217,6 +219,8 @@ QHash<int, QByteArray> ScriptLineModel::roleNames() const {
         {SpeakerIdRole, "speakerId"},
         {SpeakerNameRole, "speakerName"},
         {SpeakerColorRole, "speakerColor"},
+        {SpeakerVoiceRole, "speakerVoice"},
+        {SpeakerVoiceDisplayRole, "speakerVoiceDisplay"},
         {TextRole, "text"},
         {PauseMsRole, "pauseMs"},
         {HasRateOverrideRole, "hasRateOverride"},
@@ -1605,8 +1609,18 @@ void Backend::setSpeakerVoice(int index, const QString &shortName) {
     pushUndoSnapshot();
     speakers[index].voice = shortName;
     m_speakerModel.notifyUpdated(index);
+    m_lineModel.notifySpeakerChanged();
     updateClipStatesFromCache();
     markDirty();
+}
+
+int Backend::speakerIndexForId(const QString &speakerId) const {
+    const auto &speakers = m_speakerModel.items();
+    for (int i = 0; i < speakers.size(); ++i) {
+        if (speakers.at(i).id == speakerId)
+            return i;
+    }
+    return -1;
 }
 
 void Backend::randomizeSpeakerVoices() {
