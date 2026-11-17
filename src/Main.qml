@@ -343,6 +343,13 @@ ApplicationWindow {
                         onClicked: backend.saveProject()
                     }
 
+                    Button {
+                        text: qsTr("Close")
+                        flat: true
+                        Material.roundedScale: theme.radius
+                        onClicked: win.requestQuit()
+                    }
+
                     Rectangle {
                         width: 1
                         height: 24
