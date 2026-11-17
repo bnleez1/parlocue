@@ -119,6 +119,9 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     void setLines(const QVector<ScriptLine> &lines);
+    void insertLine(int row, const ScriptLine &line);
+    void removeLineAt(int row);
+    void moveLineAt(int fromRow, int toRow);
     void setSpeakers(const QVector<Speaker> *speakers);
     void notifyUpdated(int row);
     void notifySpeakerChanged();

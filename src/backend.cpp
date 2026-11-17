@@ -235,6 +235,31 @@ void ScriptLineModel::setLines(const QVector<ScriptLine> &lines) {
     endResetModel();
 }
 
+void ScriptLineModel::insertLine(int row, const ScriptLine &line) {
+    const int pos = qBound(0, row, m_lines.size());
+    beginInsertRows(QModelIndex(), pos, pos);
+    m_lines.insert(pos, line);
+    endInsertRows();
+}
+
+void ScriptLineModel::removeLineAt(int row) {
+    if (row < 0 || row >= m_lines.size())
+        return;
+    beginRemoveRows(QModelIndex(), row, row);
+    m_lines.removeAt(row);
+    endRemoveRows();
+}
+
+void ScriptLineModel::moveLineAt(int fromRow, int toRow) {
+    if (fromRow < 0 || fromRow >= m_lines.size() || toRow < 0 || toRow >= m_lines.size() || fromRow == toRow)
+        return;
+    const int dest = toRow > fromRow ? toRow + 1 : toRow;
+    if (!beginMoveRows(QModelIndex(), fromRow, fromRow, QModelIndex(), dest))
+        return;
+    m_lines.move(fromRow, toRow);
+    endMoveRows();
+}
+
 void ScriptLineModel::setSpeakers(const QVector<Speaker> *speakers) {
     m_speakers = speakers;
 }
@@ -1320,8 +1345,7 @@ void Backend::addLine(int afterIndex, const QString &speakerId, const QString &t
     line.pauseMs = sp ? sp->defaultPauseMs : m_defaultPauseMs;
 
     const int insertPos = (afterIndex >= 0 && afterIndex < lines.size()) ? afterIndex + 1 : lines.size();
-    lines.insert(insertPos, line);
-    m_lineModel.setLines(lines);
+    m_lineModel.insertLine(insertPos, line);
     m_selectedLineIndex = insertPos;
     updateClipStatesFromCache();
     markDirty();
@@ -1330,13 +1354,12 @@ void Backend::addLine(int afterIndex, const QString &speakerId, const QString &t
 }
 
 void Backend::duplicateLine(int index) {
-    auto lines = m_lineModel.items();
+    const auto &lines = m_lineModel.items();
     if (index < 0 || index >= lines.size()) return;
     pushUndoSnapshot();
     ScriptLine copy = lines.at(index);
     copy.id = newId("l");
-    lines.insert(index + 1, copy);
-    m_lineModel.setLines(lines);
+    m_lineModel.insertLine(index + 1, copy);
     m_selectedLineIndex = index + 1;
     markDirty();
     emit linesChanged();
@@ -1344,31 +1367,29 @@ void Backend::duplicateLine(int index) {
 }
 
 void Backend::removeLine(int index) {
-    auto lines = m_lineModel.items();
+    const auto &lines = m_lineModel.items();
     if (index < 0 || index >= lines.size()) return;
     pushUndoSnapshot();
-    lines.removeAt(index);
-    if (lines.isEmpty()) {
+    m_lineModel.removeLineAt(index);
+    if (m_lineModel.items().isEmpty()) {
         ScriptLine empty;
         empty.id = newId("l");
         empty.speakerId = m_speakerModel.items().isEmpty() ? QString() : m_speakerModel.items().first().id;
         empty.pauseMs = m_defaultPauseMs;
-        lines.append(empty);
+        m_lineModel.insertLine(0, empty);
     }
-    m_lineModel.setLines(lines);
-    m_selectedLineIndex = qBound(0, index, lines.size() - 1);
+    m_selectedLineIndex = qBound(0, index, m_lineModel.items().size() - 1);
     markDirty();
     emit linesChanged();
     emit selectionChanged();
 }
 
 void Backend::moveLine(int fromIndex, int toIndex) {
-    auto lines = m_lineModel.items();
+    const auto &lines = m_lineModel.items();
     if (fromIndex < 0 || fromIndex >= lines.size() || toIndex < 0 || toIndex >= lines.size() || fromIndex == toIndex)
         return;
     pushUndoSnapshot();
-    lines.move(fromIndex, toIndex);
-    m_lineModel.setLines(lines);
+    m_lineModel.moveLineAt(fromIndex, toIndex);
     m_selectedLineIndex = toIndex;
     markDirty();
     emit linesChanged();
