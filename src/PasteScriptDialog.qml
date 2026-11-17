@@ -90,7 +90,9 @@ Dialog {
         }
 
         ScrollView {
+            id: scriptScroll
             Layout.fillWidth: true
+            Layout.preferredWidth: 100
             Layout.fillHeight: true
             clip: true
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
@@ -98,7 +100,7 @@ Dialog {
 
             TextArea {
                 id: scriptInput
-                width: parent.width
+                width: scriptScroll.availableWidth
                 wrapMode: TextEdit.Wrap
                 font.pixelSize: 14
                 color: theme.textPrimary
@@ -139,7 +141,9 @@ Dialog {
                 color: theme.surfacePill
                 radius: Math.min(4, theme.radius)
                 Layout.fillWidth: true
+                Layout.preferredWidth: 100
                 Layout.preferredHeight: 30
+                clip: true
 
                 Label {
                     id: previewLabel
