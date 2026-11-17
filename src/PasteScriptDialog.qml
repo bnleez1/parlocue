@@ -92,9 +92,13 @@ Dialog {
         ScrollView {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            clip: true
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            contentWidth: availableWidth
 
             TextArea {
                 id: scriptInput
+                width: parent.width
                 wrapMode: TextEdit.Wrap
                 font.pixelSize: 14
                 color: theme.textPrimary
@@ -134,12 +138,17 @@ Dialog {
             Rectangle {
                 color: theme.surfacePill
                 radius: Math.min(4, theme.radius)
+                Layout.fillWidth: true
                 Layout.preferredHeight: 30
-                Layout.preferredWidth: previewLabel.implicitWidth + 20
 
                 Label {
                     id: previewLabel
-                    anchors.centerIn: parent
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.leftMargin: 10
+                    anchors.rightMargin: 10
+                    elide: Text.ElideRight
                     font.pixelSize: 12
                     color: previewData.lineCount > 0 ? theme.accentText : theme.textMuted
                     text: previewData.lineCount > 0
@@ -150,8 +159,6 @@ Dialog {
                         : qsTr("Paste script text above to preview")
                 }
             }
-
-            Item { Layout.fillWidth: true }
 
             CheckBox {
                 text: qsTr("Replace current script")
