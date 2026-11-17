@@ -51,7 +51,12 @@ ApplicationWindow {
         id: cbtn
         implicitHeight: 26
         implicitWidth: Math.max(26, cbtnLbl.implicitWidth + 12)
-        padding: 0
+        leftPadding: 0
+        rightPadding: 0
+        topPadding: 0
+        bottomPadding: 0
+        leftInset: 0
+        rightInset: 0
         topInset: 0
         bottomInset: 0
         property color labelColor: theme.textSecondary
@@ -69,9 +74,67 @@ ApplicationWindow {
         }
     }
 
+    component PauseInput: TextField {
+        id: pinput
+        property int valueMs: 0
+        property int maxMs: 30000
+        signal committed(int ms)
+
+        implicitWidth: 46
+        implicitHeight: 26
+        leftPadding: 4
+        rightPadding: 4
+        topPadding: 0
+        bottomPadding: 0
+        leftInset: 0
+        rightInset: 0
+        topInset: 0
+        bottomInset: 0
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        font.pixelSize: 12
+        font.family: "monospace"
+        color: theme.textPrimary
+        selectByMouse: true
+        text: win.formatSeconds(valueMs)
+        onValueMsChanged: if (!activeFocus) text = win.formatSeconds(valueMs)
+        background: Rectangle {
+            color: pinput.activeFocus ? theme.surfaceInput : "transparent"
+            border.color: pinput.activeFocus ? theme.accentControl : (pinput.hovered ? theme.borderStrong : "transparent")
+            border.width: 1
+            radius: Math.min(4, theme.radius)
+        }
+        function commitValue() {
+            const ms = win.parsePauseInputMs(text, valueMs, maxMs)
+            text = win.formatSeconds(ms)
+            if (ms !== valueMs)
+                committed(ms)
+        }
+        onAccepted: {
+            commitValue()
+            focus = false
+        }
+        onEditingFinished: commitValue()
+    }
+
     function formatSeconds(ms) {
         void(translator.language)
         return (ms / 1000.0).toLocaleString(Qt.locale(), 'f', 1)
+    }
+
+    function parsePauseInputMs(rawText, fallbackMs, maxMs) {
+        const s = (rawText || "").trim().toLowerCase()
+        if (!s) return fallbackMs
+        let ms = NaN
+        if (s.endsWith("ms")) {
+            ms = parseFloat(s.slice(0, -2).trim())
+        } else if (s.endsWith("s")) {
+            ms = parseFloat(s.slice(0, -1).trim()) * 1000.0
+        } else {
+            ms = parseFloat(s.replace(",", ".")) * 1000.0
+        }
+        if (isNaN(ms)) return fallbackMs
+        return Math.max(0, Math.min(maxMs, Math.round(ms)))
     }
 
     function formatSpeedLabel(ratePct) {
@@ -468,26 +531,28 @@ ApplicationWindow {
                                 color: theme.textMuted
                             }
 
-                            Button {
+                            CompactBtn {
                                 text: "−"
-                                flat: true
-                                Layout.preferredWidth: 28
-                                Material.roundedScale: Math.min(4, theme.radius)
                                 onClicked: backend.defaultPauseMs = Math.max(0, backend.defaultPauseMs - 200)
                             }
 
-                            Label {
-                                text: qsTr("%1 s").arg(win.formatSeconds(backend.defaultPauseMs))
-                                font.pixelSize: 12
-                                font.family: "monospace"
-                                color: theme.textPrimary
+                            RowLayout {
+                                spacing: 2
+                                PauseInput {
+                                    valueMs: backend.defaultPauseMs
+                                    maxMs: 15000
+                                    onCommitted: function(ms) { backend.defaultPauseMs = ms }
+                                }
+                                Label {
+                                    text: qsTr("s")
+                                    font.pixelSize: 12
+                                    font.family: "monospace"
+                                    color: theme.textMuted
+                                }
                             }
 
-                            Button {
+                            CompactBtn {
                                 text: "+"
-                                flat: true
-                                Layout.preferredWidth: 28
-                                Material.roundedScale: Math.min(4, theme.radius)
                                 onClicked: backend.defaultPauseMs = Math.min(15000, backend.defaultPauseMs + 200)
                             }
 
@@ -705,11 +770,19 @@ ApplicationWindow {
                                         text: "−"
                                         onClicked: backend.setLinePause(index, Math.max(0, model.pauseMs - 200))
                                     }
-                                    Label {
-                                        text: qsTr("%1s").arg(win.formatSeconds(model.pauseMs))
-                                        font.pixelSize: 12
-                                        font.family: "monospace"
-                                        color: theme.textSecondary
+                                    RowLayout {
+                                        spacing: 1
+                                        PauseInput {
+                                            valueMs: model.pauseMs
+                                            maxMs: 30000
+                                            onCommitted: function(ms) { backend.setLinePause(index, ms) }
+                                        }
+                                        Label {
+                                            text: "s"
+                                            font.pixelSize: 12
+                                            font.family: "monospace"
+                                            color: theme.textMuted
+                                        }
                                     }
                                     CompactBtn {
                                         text: "+"
