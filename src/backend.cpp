@@ -936,7 +936,7 @@ QString inferGenderHint(const QString &name) {
         "man", "male", "boy", "mr", "sir", "father", "dad", "daddy", "papa",
         "grandpa", "grandfather", "granddad", "brother", "uncle", "son", "husband",
         "boyfriend", "nephew", "king", "prince", "guy", "gentleman", "groom",
-        "waiter", "host", "actor", "he", "him", "his", "senor", "señor", "don",
+        "waiter", "waitor", "host", "actor", "he", "him", "his", "senor", "señor", "don",
         // Common male names
         "aaron", "adam", "alan", "albert", "alejandro", "alex", "andrew", "anthony",
         "arthur", "austin", "ben", "benjamin", "billy", "bobby", "brandon", "brian",
