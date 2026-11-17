@@ -64,6 +64,40 @@ async def cmd_synthesize(edge_tts, text_file, voice, rate, pitch, out_path):
     os.replace(tmp_path, out_path)
 
 
+def cmd_extract_docx(path):
+    import zipfile
+    import xml.etree.ElementTree as ET
+
+    w_ns = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+    p_tag = f"{{{w_ns}}}p"
+    t_tag = f"{{{w_ns}}}t"
+    tab_tag = f"{{{w_ns}}}tab"
+    br_tag = f"{{{w_ns}}}br"
+    cr_tag = f"{{{w_ns}}}cr"
+
+    with zipfile.ZipFile(path, "r") as zf:
+        if "word/document.xml" not in zf.namelist():
+            raise ValueError("Invalid Word document: missing word/document.xml")
+        xml_bytes = zf.read("word/document.xml")
+
+    root = ET.fromstring(xml_bytes)
+    paragraphs = []
+    for p in root.iter(p_tag):
+        parts = []
+        for elem in p.iter():
+            if elem.tag == t_tag and elem.text:
+                parts.append(elem.text)
+            elif elem.tag == tab_tag:
+                parts.append("\t")
+            elif elem.tag in (br_tag, cr_tag):
+                parts.append("\n")
+        para = "".join(parts).strip()
+        if para:
+            paragraphs.append(para)
+
+    sys.stdout.write("\n\n".join(paragraphs))
+
+
 def main():
     parser = argparse.ArgumentParser(description="ParloCue TTS bridge")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -78,7 +112,19 @@ def main():
     synth.add_argument("--pitch", default="+0Hz")
     synth.add_argument("--out", required=True)
 
+    extract_docx = sub.add_parser("extract-docx")
+    extract_docx.add_argument("--file", required=True)
+
     args = parser.parse_args()
+
+    if args.command == "extract-docx":
+        try:
+            cmd_extract_docx(args.file)
+        except Exception as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
+        return 0
+
     edge_tts, err = _import_edge_tts()
 
     if args.command == "check":

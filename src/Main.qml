@@ -11,10 +11,12 @@ ApplicationWindow {
     minimumHeight: 520
     visible: true
     title: (backend.dirty ? "* " : "") + backend.projectTitle + " — ParloCue"
-    color: "#0e0e10"
+    color: theme.bgBottom
 
-    Material.theme: Material.Dark
-    Material.accent: theme.accent
+    Material.theme: theme.isDark ? Material.Dark : Material.Light
+    Material.accent: theme.accentControl
+    Material.foreground: theme.textPrimary
+    Material.background: theme.surfaceDialog
     Material.roundedScale: theme.radius
 
     property bool helpVisible: false
@@ -34,12 +36,12 @@ ApplicationWindow {
             text: abtn.text
             font.pixelSize: 13
             font.bold: true
-            color: abtn.enabled ? theme.accentForeground : "#6e6e7a"
+            color: abtn.enabled ? theme.accentControlForeground : theme.disabledFg
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
         background: Rectangle {
-            color: abtn.enabled ? (abtn.down ? Qt.darker(theme.accent, 1.12) : theme.accent) : "#25252e"
+            color: abtn.enabled ? (abtn.down ? Qt.darker(theme.accentControl, 1.12) : theme.accentControl) : theme.disabledBg
             radius: Math.min(4, theme.radius)
             opacity: abtn.hovered && abtn.enabled ? 0.92 : 1.0
         }
@@ -52,17 +54,17 @@ ApplicationWindow {
         padding: 0
         topInset: 0
         bottomInset: 0
-        property color labelColor: "#d4d4dc"
+        property color labelColor: theme.textSecondary
         contentItem: Label {
             id: cbtnLbl
             text: cbtn.text
             font.pixelSize: 13
-            color: cbtn.enabled ? cbtn.labelColor : "#52525e"
+            color: cbtn.enabled ? cbtn.labelColor : theme.disabledFg
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
         background: Rectangle {
-            color: cbtn.down ? "#2c2c36" : (cbtn.hovered && cbtn.enabled ? "#23232c" : "transparent")
+            color: cbtn.down ? theme.buttonDown : (cbtn.hovered && cbtn.enabled ? theme.buttonHover : "transparent")
             radius: Math.min(4, theme.radius)
         }
     }
@@ -215,6 +217,25 @@ ApplicationWindow {
         LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
         LayoutMirroring.childrenInherit: true
 
+        Rectangle {
+            anchors.fill: parent
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: theme.bgTop }
+                GradientStop { position: 0.45; color: theme.bgMid }
+                GradientStop { position: 1.0; color: theme.bgBottom }
+            }
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            gradient: Gradient {
+                orientation: Gradient.Horizontal
+                GradientStop { position: 0.0; color: Qt.rgba(theme.bgTop.r, theme.bgTop.g, theme.bgTop.b, 0.28) }
+                GradientStop { position: 0.55; color: "transparent" }
+                GradientStop { position: 1.0; color: Qt.rgba(theme.bgTop.r, theme.bgTop.g, theme.bgTop.b, 0.22) }
+            }
+        }
+
         ColumnLayout {
             anchors.fill: parent
             spacing: 0
@@ -223,8 +244,8 @@ ApplicationWindow {
             Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 58
-                color: "#141418"
-                border.color: "#22222a"
+                color: theme.surfaceBar
+                border.color: theme.border
                 border.width: 1
 
                 RowLayout {
@@ -237,12 +258,12 @@ ApplicationWindow {
                         text: "ParloCue"
                         font.pixelSize: 16
                         font.bold: true
-                        color: theme.accent
+                        color: theme.accentText
                     }
 
                     Label {
                         text: "/"
-                        color: "#444450"
+                        color: theme.textDim
                         font.pixelSize: 16
                     }
 
@@ -250,7 +271,7 @@ ApplicationWindow {
                         id: titleField
                         text: backend.projectTitle
                         font.pixelSize: 14
-                        color: "#f4f4f6"
+                        color: theme.textPrimary
                         Layout.preferredWidth: 250
                         Layout.preferredHeight: 34
                         topPadding: 6
@@ -258,11 +279,11 @@ ApplicationWindow {
                         leftPadding: 10
                         rightPadding: 10
                         selectByMouse: true
-                        selectionColor: theme.accent
-                        selectedTextColor: theme.accentForeground
+                        selectionColor: theme.accentControl
+                        selectedTextColor: theme.accentControlForeground
                         background: Rectangle {
-                            color: "#0e0e11"
-                            border.color: titleField.activeFocus ? theme.accent : "#282832"
+                            color: theme.surfaceInput
+                            border.color: titleField.activeFocus ? theme.accentControl : theme.border
                             border.width: 1
                             radius: Math.min(4, theme.radius)
                         }
@@ -274,7 +295,7 @@ ApplicationWindow {
                             visible: titleField.text.length === 0
                             text: qsTr("Script title")
                             font.pixelSize: 14
-                            color: "#6e6e7a"
+                            color: theme.textDim
                         }
                     }
 
@@ -282,7 +303,7 @@ ApplicationWindow {
                         visible: backend.dirty
                         text: "●"
                         font.pixelSize: 11
-                        color: theme.accent
+                        color: theme.accentText
                     }
 
                     Item { Layout.fillWidth: true }
@@ -292,6 +313,13 @@ ApplicationWindow {
                         flat: true
                         Material.roundedScale: theme.radius
                         onClicked: pasteDialog.open()
+                    }
+
+                    Button {
+                        text: qsTr("Import Word/PDF")
+                        flat: true
+                        Material.roundedScale: theme.radius
+                        onClicked: backend.importDocumentDialog()
                     }
 
                     Button {
@@ -318,12 +346,13 @@ ApplicationWindow {
                     Rectangle {
                         width: 1
                         height: 24
-                        color: "#2a2a34"
+                        color: theme.border
                     }
 
                     Button {
                         text: backend.playing ? qsTr("Stop") : qsTr("Play Full")
                         enabled: !backend.busy && backend.ttsAvailable
+                        Material.background: theme.buttonBg
                         Material.roundedScale: theme.radius
                         onClicked: backend.primaryAction()
                     }
@@ -349,9 +378,9 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 42
                 color: (!backend.ttsAvailable || !backend.ffmpegAvailable || backend.statusBannerIsError)
-                    ? "#32191c" : "#1b2820"
+                    ? theme.bannerErrorBg : theme.bannerOkBg
                 border.color: (!backend.ttsAvailable || !backend.ffmpegAvailable || backend.statusBannerIsError)
-                    ? "#6b2930" : "#2e543b"
+                    ? theme.bannerErrorBorder : theme.bannerOkBorder
                 border.width: 1
 
                 RowLayout {
@@ -363,7 +392,7 @@ ApplicationWindow {
                     Label {
                         Layout.fillWidth: true
                         font.pixelSize: 13
-                        color: "#f4f4f6"
+                        color: theme.textPrimary
                         elide: Text.ElideRight
                         text: {
                             if (!backend.ttsAvailable || !backend.ffmpegAvailable)
@@ -406,8 +435,8 @@ ApplicationWindow {
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 46
-                        color: "#121216"
-                        border.color: "#22222a"
+                        color: theme.surfaceBar
+                        border.color: theme.border
                         border.width: 1
 
                         RowLayout {
@@ -419,17 +448,17 @@ ApplicationWindow {
                             Button {
                                 text: qsTr("+ Add Line")
                                 flat: true
-                                Material.foreground: theme.accent
+                                Material.foreground: theme.accentText
                                 Material.roundedScale: Math.min(4, theme.radius)
                                 onClicked: backend.addLine(backend.selectedLineIndex)
                             }
 
-                            Rectangle { width: 1; height: 20; color: "#262630" }
+                            Rectangle { width: 1; height: 20; color: theme.border }
 
                             Label {
                                 text: qsTr("Default pause:")
                                 font.pixelSize: 12
-                                color: "#9c9ca8"
+                                color: theme.textMuted
                             }
 
                             Button {
@@ -444,7 +473,7 @@ ApplicationWindow {
                                 text: qsTr("%1 s").arg(win.formatSeconds(backend.defaultPauseMs))
                                 font.pixelSize: 12
                                 font.family: "monospace"
-                                color: "#e8e8ee"
+                                color: theme.textPrimary
                             }
 
                             Button {
@@ -468,7 +497,7 @@ ApplicationWindow {
                             Label {
                                 text: qsTr("%n lines", "", backend.lineCount) + " · " + qsTr("%n words", "", backend.wordCount)
                                 font.pixelSize: 12
-                                color: "#888894"
+                                color: theme.textMuted
                             }
                         }
                     }
@@ -501,11 +530,11 @@ ApplicationWindow {
                             height: cardCol.implicitHeight + 20
                             radius: theme.radius
                             color: (backend.playingLineIndex === index && backend.playing)
-                                ? "#1d1d24"
-                                : (backend.selectedLineIndex === index ? "#17171c" : "#131317")
+                                ? theme.surfaceCardPlaying
+                                : (backend.selectedLineIndex === index ? theme.surfaceCardSelected : theme.surfaceCard)
                             border.color: (backend.playingLineIndex === index && backend.playing)
-                                ? theme.accent
-                                : (backend.selectedLineIndex === index ? "#343440" : "#22222a")
+                                ? theme.accentControl
+                                : (backend.selectedLineIndex === index ? theme.borderStrong : theme.border)
                             border.width: 1
 
                             // Left speaker accent strip
@@ -516,7 +545,7 @@ ApplicationWindow {
                                 anchors.top: parent.top
                                 anchors.topMargin: 1
                                 color: (backend.playingLineIndex === index && backend.playing)
-                                    ? theme.accent : model.speakerColor
+                                    ? theme.accentControl : Qt.darker(model.speakerColor, 1.15)
                                 radius: Math.min(2, theme.radius)
                             }
 
@@ -546,7 +575,7 @@ ApplicationWindow {
                                         text: (index + 1).toString().padStart(2, '0')
                                         font.pixelSize: 12
                                         font.family: "monospace"
-                                        color: "#6e6e7a"
+                                        color: theme.textDim
                                     }
 
                                     // Speaker Picker Pill
@@ -554,8 +583,8 @@ ApplicationWindow {
                                         Layout.preferredHeight: 26
                                         Layout.preferredWidth: spPillRow.implicitWidth + 16
                                         radius: Math.min(4, theme.radius)
-                                        color: "#22222a"
-                                        border.color: model.speakerColor
+                                        color: theme.surfacePill
+                                        border.color: Qt.darker(model.speakerColor, 1.25)
                                         border.width: 1
 
                                         RowLayout {
@@ -567,18 +596,18 @@ ApplicationWindow {
                                                 width: 8
                                                 height: 8
                                                 radius: 4
-                                                color: model.speakerColor
+                                                color: Qt.darker(model.speakerColor, 1.15)
                                             }
                                             Label {
                                                 text: model.speakerName
                                                 font.pixelSize: 12
                                                 font.bold: true
-                                                color: "#f0f0f5"
+                                                color: theme.textPrimary
                                             }
                                             Label {
                                                 text: "▾"
                                                 font.pixelSize: 10
-                                                color: "#8c8c98"
+                                                color: theme.textMuted
                                             }
                                         }
 
@@ -594,6 +623,8 @@ ApplicationWindow {
                                         Menu {
                                             id: speakerMenu
                                             Material.roundedScale: theme.radius
+                                            Material.background: theme.surfaceDialog
+                                            Material.foreground: theme.textPrimary
                                             Instantiator {
                                                 model: backend.speakerModel
                                                 delegate: MenuItem {
@@ -612,7 +643,7 @@ ApplicationWindow {
                                             ? "⏹" : "▶"
                                         Layout.preferredWidth: 30
                                         enabled: !backend.busy && backend.ttsAvailable
-                                        labelColor: theme.accent
+                                        labelColor: theme.accentText
                                         onClicked: {
                                             backend.selectedLineIndex = index
                                             if (backend.playing && !backend.playingFullScript && backend.playingLineIndex === index)
@@ -628,18 +659,18 @@ ApplicationWindow {
                                         height: 8
                                         radius: 4
                                         color: {
-                                            if (model.clipState === "ready") return "#34D399"
-                                            if (model.clipState === "synthesizing") return theme.accent
-                                            if (model.clipState === "error") return "#EF4444"
-                                            return "#3f3f4a"
+                                            if (model.clipState === "ready") return theme.statusOk
+                                            if (model.clipState === "synthesizing") return theme.accentControl
+                                            if (model.clipState === "error") return theme.statusError
+                                            return theme.borderStrong
                                         }
                                     }
 
                                     // Override indicator
                                     Rectangle {
                                         visible: model.hasRateOverride || model.hasPitchOverride
-                                        color: "#2a2418"
-                                        border.color: theme.accent
+                                        color: theme.overrideBg
+                                        border.color: theme.accentControl
                                         border.width: 1
                                         radius: Math.min(4, theme.radius)
                                         Layout.preferredHeight: 22
@@ -649,7 +680,7 @@ ApplicationWindow {
                                             anchors.centerIn: parent
                                             text: qsTr("Custom")
                                             font.pixelSize: 11
-                                            color: theme.accent
+                                            color: theme.accentText
                                         }
                                     }
 
@@ -659,7 +690,7 @@ ApplicationWindow {
                                     Label {
                                         text: qsTr("Pause:")
                                         font.pixelSize: 11
-                                        color: "#888894"
+                                        color: theme.textMuted
                                     }
                                     CompactBtn {
                                         text: "−"
@@ -669,7 +700,7 @@ ApplicationWindow {
                                         text: qsTr("%1s").arg(win.formatSeconds(model.pauseMs))
                                         font.pixelSize: 12
                                         font.family: "monospace"
-                                        color: "#d4d4dc"
+                                        color: theme.textSecondary
                                     }
                                     CompactBtn {
                                         text: "+"
@@ -689,7 +720,7 @@ ApplicationWindow {
                                     }
                                     CompactBtn {
                                         text: "×"
-                                        labelColor: "#a0a0ac"
+                                        labelColor: theme.textMuted
                                         onClicked: backend.removeLine(index)
                                     }
                                 }
@@ -701,10 +732,10 @@ ApplicationWindow {
                                     text: model.text
                                     wrapMode: TextEdit.Wrap
                                     font.pixelSize: 14
-                                    color: "#f2f2f6"
+                                    color: theme.textPrimary
                                     selectByMouse: true
-                                    selectionColor: theme.accent
-                                    selectedTextColor: theme.accentForeground
+                                    selectionColor: theme.accentControl
+                                    selectedTextColor: theme.accentControlForeground
                                     topPadding: 10
                                     bottomPadding: 10
                                     leftPadding: 12
@@ -712,8 +743,8 @@ ApplicationWindow {
                                     topInset: 0
                                     bottomInset: 0
                                     background: Rectangle {
-                                        color: "#0e0e11"
-                                        border.color: lineEdit.activeFocus ? theme.accent : "#23232c"
+                                        color: theme.surfaceInput
+                                        border.color: lineEdit.activeFocus ? theme.accentControl : theme.border
                                         border.width: 1
                                         radius: Math.min(4, theme.radius)
                                     }
@@ -734,7 +765,7 @@ ApplicationWindow {
                                         visible: lineEdit.text.length === 0
                                         text: qsTr("Type or paste spoken text for this line…")
                                         font.pixelSize: 14
-                                        color: "#686876"
+                                        color: theme.textDim
                                     }
                                 }
 
@@ -742,7 +773,7 @@ ApplicationWindow {
                                     visible: model.clipState === "error" && model.clipError.length > 0
                                     text: model.clipError
                                     font.pixelSize: 11
-                                    color: "#f87171"
+                                    color: theme.statusError
                                     wrapMode: Text.Wrap
                                     Layout.fillWidth: true
                                 }
@@ -755,7 +786,7 @@ ApplicationWindow {
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.preferredWidth: 1
-                    color: "#22222a"
+                    color: theme.border
                 }
 
                 // Right Pane: Speakers & Voice Studio
@@ -782,7 +813,7 @@ ApplicationWindow {
                                 text: qsTr("Speakers & Voices")
                                 font.pixelSize: 15
                                 font.bold: true
-                                color: "#f4f4f6"
+                                color: theme.textPrimary
                                 Layout.fillWidth: true
                             }
                             Button {
@@ -794,7 +825,7 @@ ApplicationWindow {
                             Button {
                                 text: qsTr("+ Add")
                                 flat: true
-                                Material.foreground: theme.accent
+                                Material.foreground: theme.accentText
                                 Material.roundedScale: Math.min(4, theme.radius)
                                 onClicked: backend.addSpeaker()
                             }
@@ -813,8 +844,8 @@ ApplicationWindow {
                                     Layout.fillWidth: true
                                     Layout.preferredHeight: 48
                                     radius: Math.min(4, theme.radius)
-                                    color: backend.selectedSpeakerIndex === index ? "#202028" : "#141418"
-                                    border.color: backend.selectedSpeakerIndex === index ? theme.accent : "#24242c"
+                                    color: backend.selectedSpeakerIndex === index ? theme.surfaceCardSelected : theme.surfaceCard
+                                    border.color: backend.selectedSpeakerIndex === index ? theme.accentControl : theme.border
                                     border.width: 1
 
                                     MouseArea {
@@ -843,14 +874,14 @@ ApplicationWindow {
                                                 text: model.name
                                                 font.pixelSize: 13
                                                 font.bold: true
-                                                color: "#f4f4f6"
+                                                color: theme.textPrimary
                                                 elide: Text.ElideRight
                                                 Layout.fillWidth: true
                                             }
                                             Label {
                                                 text: model.voiceDisplay
                                                 font.pixelSize: 11
-                                                color: "#9898a6"
+                                                color: theme.textMuted
                                                 elide: Text.ElideRight
                                                 Layout.fillWidth: true
                                             }
@@ -873,8 +904,8 @@ ApplicationWindow {
                             Layout.rightMargin: 14
                             Layout.preferredHeight: spSettingsCol.implicitHeight + 24
                             radius: theme.radius
-                            color: "#141419"
-                            border.color: "#24242e"
+                            color: theme.surfaceCard
+                            border.color: theme.border
                             border.width: 1
 
                             ColumnLayout {
@@ -899,13 +930,13 @@ ApplicationWindow {
                                     Label {
                                         text: qsTr("Neural Voice")
                                         font.pixelSize: 12
-                                        color: "#9a9aa6"
+                                        color: theme.textMuted
                                     }
                                     Label {
                                         text: backend.selectedSpeaker.voiceDisplay || ""
                                         font.pixelSize: 13
                                         font.bold: true
-                                        color: "#f2f2f6"
+                                        color: theme.textPrimary
                                         elide: Text.ElideRight
                                         Layout.fillWidth: true
                                     }
@@ -924,6 +955,7 @@ ApplicationWindow {
                                         Button {
                                             text: qsTr("Test")
                                             enabled: backend.ttsAvailable && !backend.busy
+                                            Material.background: theme.buttonBg
                                             Material.roundedScale: Math.min(4, theme.radius)
                                             onClicked: backend.sampleVoice(
                                                 backend.selectedSpeaker.voice,
@@ -943,14 +975,14 @@ ApplicationWindow {
                                         Label {
                                             text: qsTr("Speed")
                                             font.pixelSize: 12
-                                            color: "#9a9aa6"
+                                            color: theme.textMuted
                                             Layout.fillWidth: true
                                         }
                                         Label {
                                             text: win.formatSpeedLabel(backend.selectedSpeaker.rate || 0)
                                             font.pixelSize: 12
                                             font.family: "monospace"
-                                            color: theme.accent
+                                            color: theme.accentText
                                         }
                                     }
                                     Slider {
@@ -997,7 +1029,7 @@ ApplicationWindow {
                                         Label {
                                             text: qsTr("Pitch")
                                             font.pixelSize: 12
-                                            color: "#9a9aa6"
+                                            color: theme.textMuted
                                             Layout.fillWidth: true
                                         }
                                         Label {
@@ -1005,7 +1037,7 @@ ApplicationWindow {
                                             text: (pVal >= 0 ? "+" : "") + pVal + " Hz"
                                             font.pixelSize: 12
                                             font.family: "monospace"
-                                            color: "#e2e2ea"
+                                            color: theme.textSecondary
                                         }
                                         Button {
                                             text: qsTr("Reset")
@@ -1039,14 +1071,14 @@ ApplicationWindow {
                                         Label {
                                             text: qsTr("Default pause for speaker")
                                             font.pixelSize: 12
-                                            color: "#9a9aa6"
+                                            color: theme.textMuted
                                             Layout.fillWidth: true
                                         }
                                         Label {
                                             text: qsTr("%1 s").arg(win.formatSeconds(backend.selectedSpeaker.defaultPauseMs || 0))
                                             font.pixelSize: 12
                                             font.family: "monospace"
-                                            color: "#e2e2ea"
+                                            color: theme.textSecondary
                                         }
                                     }
                                     Slider {
@@ -1070,8 +1102,8 @@ ApplicationWindow {
                             Layout.rightMargin: 14
                             Layout.preferredHeight: lineOvCol.implicitHeight + 24
                             radius: theme.radius
-                            color: "#141419"
-                            border.color: "#24242e"
+                            color: theme.surfaceCard
+                            border.color: theme.border
                             border.width: 1
 
                             ColumnLayout {
@@ -1084,7 +1116,7 @@ ApplicationWindow {
                                     text: qsTr("Line %1 Override").arg(backend.selectedLineIndex + 1)
                                     font.pixelSize: 13
                                     font.bold: true
-                                    color: "#f2f2f6"
+                                    color: theme.textPrimary
                                 }
 
                                 CheckBox {
@@ -1112,7 +1144,7 @@ ApplicationWindow {
                                         text: win.formatSpeedLabel(backend.selectedLine.rateOverride || 0)
                                         font.pixelSize: 11
                                         font.family: "monospace"
-                                        color: theme.accent
+                                        color: theme.accentText
                                     }
                                 }
 
@@ -1142,7 +1174,7 @@ ApplicationWindow {
                                         text: (pv >= 0 ? "+" : "") + pv + " Hz"
                                         font.pixelSize: 11
                                         font.family: "monospace"
-                                        color: theme.accent
+                                        color: theme.accentText
                                     }
                                 }
                             }
@@ -1158,8 +1190,8 @@ ApplicationWindow {
                 visible: backend.busy || backend.playing || backend.playbackDurationMs > 0
                 Layout.fillWidth: true
                 Layout.preferredHeight: 52
-                color: "#141418"
-                border.color: "#22222a"
+                color: theme.surfaceBar
+                border.color: theme.border
                 border.width: 1
 
                 RowLayout {
@@ -1173,7 +1205,7 @@ ApplicationWindow {
                         visible: backend.busy
                         text: backend.workMessage
                         font.pixelSize: 13
-                        color: "#f2f2f6"
+                        color: theme.textPrimary
                     }
 
                     ProgressBar {
@@ -1198,7 +1230,7 @@ ApplicationWindow {
                         visible: !backend.busy
                         text: backend.playing ? "⏹" : "▶"
                         flat: true
-                        Material.foreground: theme.accent
+                        Material.foreground: theme.accentText
                         Material.roundedScale: Math.min(4, theme.radius)
                         onClicked: backend.playing ? backend.stopPlayback() : backend.playAll()
                     }
@@ -1211,7 +1243,7 @@ ApplicationWindow {
                                 ? qsTr("Line %1").arg(backend.playingLineIndex + 1)
                                 : qsTr("Voice sample"))
                         font.pixelSize: 12
-                        color: "#b4b4c0"
+                        color: theme.textMuted
                     }
 
                     Slider {
@@ -1228,7 +1260,7 @@ ApplicationWindow {
                         text: backend.formatDuration(backend.playbackPositionMs) + " / " + backend.formatDuration(backend.playbackDurationMs)
                         font.pixelSize: 12
                         font.family: "monospace"
-                        color: "#d4d4dc"
+                        color: theme.textSecondary
                     }
                 }
             }
@@ -1236,6 +1268,12 @@ ApplicationWindow {
     }
 
     PasteScriptDialog { id: pasteDialog }
+    Connections {
+        target: backend
+        function onDocumentTextExtracted(text, fileName) {
+            pasteDialog.openWithText(text)
+        }
+    }
     VoicePickerDialog { id: voicePicker }
     ExportDialog { id: exportDialog }
     ShortcutOverlay { id: helpOverlay }
@@ -1249,8 +1287,8 @@ ApplicationWindow {
         Material.roundedScale: theme.radius
 
         background: Rectangle {
-            color: "#18181c"
-            border.color: "#2c2c34"
+            color: theme.surfaceDialog
+            border.color: theme.borderStrong
             border.width: 1
             radius: theme.radius
         }
@@ -1260,7 +1298,7 @@ ApplicationWindow {
             Label {
                 text: qsTr("Save changes to \"%1\" before continuing?").arg(backend.projectTitle)
                 wrapMode: Text.Wrap
-                color: "#e2e2ea"
+                color: theme.textSecondary
                 Layout.fillWidth: true
             }
             RowLayout {
@@ -1276,7 +1314,7 @@ ApplicationWindow {
                 Button {
                     text: qsTr("Discard")
                     flat: true
-                    Material.foreground: "#f87171"
+                    Material.foreground: theme.statusError
                     Material.roundedScale: theme.radius
                     onClicked: {
                         discardDialog.close()

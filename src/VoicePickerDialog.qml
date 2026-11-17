@@ -22,8 +22,8 @@ Dialog {
     }
 
     background: Rectangle {
-        color: "#18181c"
-        border.color: "#2c2c34"
+        color: theme.surfaceDialog
+        border.color: theme.borderStrong
         border.width: 1
         radius: theme.radius
     }
@@ -47,6 +47,7 @@ Dialog {
             Button {
                 text: backend.voicesLoading ? qsTr("Refreshing…") : qsTr("Refresh")
                 enabled: backend.ttsAvailable && !backend.voicesLoading
+                Material.background: theme.buttonBg
                 Material.roundedScale: theme.radius
                 onClicked: backend.refreshVoices()
             }
@@ -113,8 +114,8 @@ Dialog {
                 width: voiceList.width - 10
                 height: 60
                 radius: Math.min(4, theme.radius)
-                color: model.shortName === root.currentVoice ? "#24242c" : "#131317"
-                border.color: model.shortName === root.currentVoice ? theme.accent : "#24242c"
+                color: model.shortName === root.currentVoice ? theme.surfaceCardSelected : theme.surfaceCard
+                border.color: model.shortName === root.currentVoice ? theme.accentControl : theme.border
                 border.width: 1
 
                 RowLayout {
@@ -128,7 +129,7 @@ Dialog {
                         flat: true
                         Layout.preferredWidth: 34
                         font.pixelSize: 16
-                        Material.foreground: model.isFavorite ? theme.accent : "#787886"
+                        Material.foreground: model.isFavorite ? theme.accentText : theme.textDim
                         onClicked: backend.toggleFavoriteVoice(model.shortName)
                     }
 
@@ -142,10 +143,10 @@ Dialog {
                                 text: model.displayName
                                 font.pixelSize: 14
                                 font.bold: true
-                                color: "#f4f4f6"
+                                color: theme.textPrimary
                             }
                             Rectangle {
-                                color: "#25252e"
+                                color: theme.surfacePill
                                 radius: Math.min(4, theme.radius)
                                 Layout.preferredHeight: 20
                                 Layout.preferredWidth: locText.implicitWidth + 12
@@ -154,20 +155,20 @@ Dialog {
                                     anchors.centerIn: parent
                                     text: model.locale
                                     font.pixelSize: 11
-                                    color: "#b8b8c4"
+                                    color: theme.textSecondary
                                 }
                             }
                             Label {
                                 text: model.gender
                                 font.pixelSize: 12
-                                color: "#8e8e9a"
+                                color: theme.textMuted
                             }
                         }
 
                         Label {
                             text: model.personalities ? model.personalities : model.shortName
                             font.pixelSize: 12
-                            color: "#888894"
+                            color: theme.textMuted
                             elide: Text.ElideRight
                             Layout.fillWidth: true
                         }
@@ -199,7 +200,7 @@ Dialog {
                 anchors.centerIn: parent
                 visible: voiceList.count === 0
                 text: qsTr("No voices match your filter.")
-                color: "#888894"
+                color: theme.textMuted
                 font.pixelSize: 14
             }
         }
@@ -209,7 +210,7 @@ Dialog {
             Label {
                 text: qsTr("%n voices available", "", backend.voiceModel.totalCount)
                 font.pixelSize: 12
-                color: "#888894"
+                color: theme.textMuted
             }
             Item { Layout.fillWidth: true }
             Button {

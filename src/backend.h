@@ -328,6 +328,8 @@ public:
     Q_INVOKABLE void importScriptText(const QString &rawText, bool detectSpeakers,
                                       const QString &fallbackSpeakerId, bool replaceExisting,
                                       bool randomizeVoices = false);
+    Q_INVOKABLE void importDocumentDialog();
+    bool extractDocumentText(const QString &path, QString *textOut, QString *errorOut) const;
 
     // Playback & synthesis
     Q_INVOKABLE void playLine(int index);
@@ -372,6 +374,7 @@ signals:
     void playbackChanged();
     void bannerChanged();
     void exportCompleted(bool success, const QString &message);
+    void documentTextExtracted(const QString &text, const QString &fileName);
 
 private:
     struct SynthTask {

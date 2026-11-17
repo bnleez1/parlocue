@@ -246,6 +246,29 @@ private slots:
         QCOMPARE(theme.accentForeground(), QString("white"));
     }
 
+    void themeReadsFullRistrettoPalette()
+    {
+        QTemporaryDir dir;
+        QDir(dir.path()).mkpath("theme");
+        write(dir.path() + "/theme/colors.toml",
+              "mode = \"dark\"\n"
+              "accent = \"#f38d70\"\n"
+              "background = \"#2c2525\"\n");
+
+        Theme theme(dir.path());
+        QCOMPARE(theme.accent(), QString("#f38d70"));
+        QCOMPARE(theme.accentForeground(), QString("black"));
+        QCOMPARE(theme.isDark(), false);
+        QCOMPARE(theme.bgTop(), QColor("#F5EFEA"));
+        QCOMPARE(theme.bgMid(), QColor("#E8DFDA"));
+        QCOMPARE(theme.bgBottom(), QColor("#DAD0C9"));
+        QCOMPARE(theme.textPrimary(), QColor("#1E1717"));
+        QCOMPARE(theme.accentControlForeground(), QColor("#FFFFFF"));
+        // Bright peach accent is darkened on light surfaces for button & text contrast.
+        QVERIFY(theme.accentControl().lightnessF() < QColor("#f38d70").lightnessF());
+        QVERIFY(theme.accentText().lightnessF() < QColor("#f38d70").lightnessF());
+    }
+
     void themeFollowsHyprlandRounding()
     {
         QTemporaryDir dir;
@@ -296,6 +319,61 @@ private slots:
         QCOMPARE(translator.translate("Main", "%n lines", nullptr, 25), QString("%n строк"));
         QCOMPARE(Translator::pluralCategory("ar", 11), QString("many"));
         QCOMPARE(Translator::pluralCategory("ja", 1), QString("other"));
+    }
+
+    void importWordDocxAndErrorHandling()
+    {
+        QTemporaryDir dir;
+        QTemporaryDir cacheDir;
+        FakeFilePicker picker;
+        Backend backend(&picker, cacheDir.path(), "/nonexistent/python");
+
+        const QString docxPath = dir.filePath("dialogue.docx");
+        const QString py = QStandardPaths::findExecutable("python3");
+        QVERIFY(!py.isEmpty());
+
+        QProcess zipProc;
+        zipProc.start(py, {
+            "-c",
+            "import sys, zipfile; "
+            "xml = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'"
+            "'<w:document xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">'"
+            "'<w:body>'"
+            "'<w:p><w:r><w:t>Narrator: Welcome to the course.</w:t></w:r></w:p>'"
+            "'<w:p><w:r><w:t>Student: Thanks!</w:t></w:r></w:p>'"
+            "'</w:body></w:document>'; "
+            "zf = zipfile.ZipFile(sys.argv[1], 'w'); "
+            "zf.writestr('word/document.xml', xml); "
+            "zf.close()",
+            docxPath
+        });
+        QVERIFY(zipProc.waitForFinished(10000));
+        QCOMPARE(zipProc.exitCode(), 0);
+
+        QSignalSpy extractedSpy(&backend, &Backend::documentTextExtracted);
+        picker.nextOpenPath = docxPath;
+        backend.importDocumentDialog();
+
+        QCOMPARE(extractedSpy.count(), 1);
+        const QString extracted = extractedSpy.at(0).at(0).toString();
+        QVERIFY(extracted.contains("Narrator: Welcome to the course."));
+        QVERIFY(extracted.contains("Student: Thanks!"));
+        QCOMPARE(extractedSpy.at(0).at(1).toString(), QString("dialogue"));
+
+        const QVariantMap preview = backend.parseScriptPreview(extracted, true);
+        QCOMPARE(preview.value("lineCount").toInt(), 2);
+        QCOMPARE(preview.value("speakerCount").toInt(), 2);
+
+        QString textOut;
+        QString errOut;
+        QVERIFY(!backend.extractDocumentText(dir.filePath("missing.docx"), &textOut, &errOut));
+        QVERIFY(!errOut.isEmpty());
+
+        const QString badExt = dir.filePath("notes.xyz");
+        write(badExt, "hello");
+        errOut.clear();
+        QVERIFY(!backend.extractDocumentText(badExt, &textOut, &errOut));
+        QVERIFY(errOut.contains("Unsupported"));
     }
 
 private:

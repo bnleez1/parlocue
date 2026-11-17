@@ -13,8 +13,8 @@ Popup {
     padding: 24
 
     background: Rectangle {
-        color: "#18181c"
-        border.color: "#2c2c34"
+        color: theme.surfaceDialog
+        border.color: theme.borderStrong
         border.width: 1
         radius: theme.radius
     }
@@ -42,7 +42,7 @@ Popup {
                 text: qsTr("Keyboard Shortcuts")
                 font.pixelSize: 18
                 font.bold: true
-                color: "#f4f4f6"
+                color: theme.textPrimary
                 Layout.fillWidth: true
             }
             Button {
@@ -66,8 +66,8 @@ Popup {
                     Rectangle {
                         Layout.preferredWidth: 168
                         Layout.preferredHeight: 28
-                        color: "#222228"
-                        border.color: "#32323c"
+                        color: theme.surfacePill
+                        border.color: theme.borderStrong
                         border.width: 1
                         radius: Math.min(4, theme.radius)
 
@@ -76,14 +76,14 @@ Popup {
                             text: modelData.keys
                             font.pixelSize: 12
                             font.family: "monospace"
-                            color: theme.accent
+                            color: theme.accentText
                         }
                     }
 
                     Label {
                         text: modelData.desc
                         font.pixelSize: 13
-                        color: "#d4d4dc"
+                        color: theme.textSecondary
                         Layout.fillWidth: true
                         elide: Text.ElideRight
                     }

@@ -16,8 +16,8 @@ Dialog {
     property bool normalizeLoudness: false
 
     background: Rectangle {
-        color: "#18181c"
-        border.color: "#2c2c34"
+        color: theme.surfaceDialog
+        border.color: theme.borderStrong
         border.width: 1
         radius: theme.radius
     }
@@ -28,7 +28,7 @@ Dialog {
         Label {
             text: qsTr("Choose what to export for Listening I / TOEFL or Kdenlive:")
             font.pixelSize: 13
-            color: "#b4b4c0"
+            color: theme.textSecondary
             wrapMode: Text.Wrap
             Layout.fillWidth: true
         }
@@ -61,7 +61,7 @@ Dialog {
             Label {
                 text: qsTr("MP3 Bitrate:")
                 font.pixelSize: 13
-                color: "#d4d4dc"
+                color: theme.textSecondary
             }
 
             ComboBox {

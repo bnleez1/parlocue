@@ -17,6 +17,7 @@
 #include <QSaveFile>
 #include <QSet>
 #include <QStandardPaths>
+#include <QTemporaryDir>
 #include <QTemporaryFile>
 #include <QTimer>
 #include <QUrl>
@@ -1752,6 +1753,125 @@ void Backend::importScriptText(const QString &rawText, bool detectSpeakers,
     markDirty();
     emit linesChanged();
     emit selectionChanged();
+}
+
+void Backend::importDocumentDialog() {
+    const QList<FileFilter> filters = {
+        {tr("Word & PDF Documents (*.docx; *.doc; *.pdf)"), {"*.docx", "*.doc", "*.pdf"}},
+        {tr("Word Documents (*.docx; *.doc)"), {"*.docx", "*.doc"}},
+        {tr("PDF Documents (*.pdf)"), {"*.pdf"}}
+    };
+    m_picker->openFile(tr("Import Word or PDF Script"), filters, [this](const QString &path) {
+        if (path.isEmpty())
+            return;
+        QString text;
+        QString err;
+        if (!extractDocumentText(path, &text, &err)) {
+            setBanner(err, true);
+            return;
+        }
+        emit documentTextExtracted(text, QFileInfo(path).completeBaseName());
+    });
+}
+
+bool Backend::extractDocumentText(const QString &path, QString *textOut, QString *errorOut) const {
+    const QFileInfo info(path);
+    if (!info.exists() || !info.isFile()) {
+        if (errorOut) *errorOut = tr("File not found: %1").arg(path);
+        return false;
+    }
+
+    const QString ext = info.suffix().toLower();
+    QString extracted;
+
+    if (ext == "docx") {
+        QString py = QStandardPaths::findExecutable("python3");
+        if (py.isEmpty() && !m_ttsPython.isEmpty() && QFileInfo::exists(m_ttsPython))
+            py = m_ttsPython;
+        if (py.isEmpty()) {
+            if (errorOut) *errorOut = tr("Python 3 is required to import .docx files.");
+            return false;
+        }
+        QProcess proc;
+        proc.start(py, {m_bridgeScriptPath, "extract-docx", "--file", path});
+        if (!proc.waitForFinished(30000) || proc.exitCode() != 0) {
+            const QString errMsg = QString::fromUtf8(proc.readAllStandardError()).trimmed();
+            if (errorOut) {
+                *errorOut = errMsg.isEmpty()
+                    ? tr("Could not extract text from Word document.")
+                    : tr("Could not extract text from Word document: %1").arg(errMsg);
+            }
+            return false;
+        }
+        extracted = QString::fromUtf8(proc.readAllStandardOutput());
+    } else if (ext == "pdf") {
+        const QString pdftotext = QStandardPaths::findExecutable("pdftotext");
+        if (pdftotext.isEmpty()) {
+            if (errorOut) *errorOut = tr("pdftotext (poppler) is required to import PDF files.");
+            return false;
+        }
+        QProcess proc;
+        proc.start(pdftotext, {"-enc", "UTF-8", path, "-"});
+        if (!proc.waitForFinished(30000) || proc.exitCode() != 0) {
+            const QString errMsg = QString::fromUtf8(proc.readAllStandardError()).trimmed();
+            if (errorOut) {
+                *errorOut = errMsg.isEmpty()
+                    ? tr("Could not extract text from PDF file.")
+                    : tr("Could not extract text from PDF file: %1").arg(errMsg);
+            }
+            return false;
+        }
+        extracted = QString::fromUtf8(proc.readAllStandardOutput());
+    } else if (ext == "doc") {
+        QString soffice = QStandardPaths::findExecutable("soffice");
+        if (soffice.isEmpty())
+            soffice = QStandardPaths::findExecutable("libreoffice");
+        if (soffice.isEmpty()) {
+            if (errorOut) *errorOut = tr("LibreOffice (soffice) is required to import legacy .doc files. Save as .docx or .pdf instead.");
+            return false;
+        }
+        QTemporaryDir tmpDir;
+        if (!tmpDir.isValid()) {
+            if (errorOut) *errorOut = tr("Could not create temporary directory for document conversion.");
+            return false;
+        }
+        QProcess proc;
+        proc.start(soffice, {"--headless", "--convert-to", "txt:Text", "--outdir", tmpDir.path(), path});
+        if (!proc.waitForFinished(45000) || proc.exitCode() != 0) {
+            const QString errMsg = QString::fromUtf8(proc.readAllStandardError()).trimmed();
+            if (errorOut) {
+                *errorOut = errMsg.isEmpty()
+                    ? tr("Could not convert legacy .doc file.")
+                    : tr("Could not convert legacy .doc file: %1").arg(errMsg);
+            }
+            return false;
+        }
+        const QString outTxt = tmpDir.filePath(info.completeBaseName() + ".txt");
+        QFile f(outTxt);
+        if (!f.open(QIODevice::ReadOnly)) {
+            if (errorOut) *errorOut = tr("Converted text output not found for .doc file.");
+            return false;
+        }
+        extracted = QString::fromUtf8(f.readAll());
+    } else {
+        if (errorOut) *errorOut = tr("Unsupported document format: .%1 (use .docx, .doc, or .pdf)").arg(ext);
+        return false;
+    }
+
+    extracted.replace("\r\n", "\n");
+    extracted = extracted.trimmed();
+    if (extracted.isEmpty()) {
+        if (errorOut) {
+            *errorOut = (ext == "pdf")
+                ? tr("No selectable text found in PDF (it may be a scanned image).")
+                : tr("The selected document does not contain any text.");
+        }
+        return false;
+    }
+
+    if (textOut)
+        *textOut = extracted;
+    return true;
 }
 
 // ---------------- Playback & Synthesis ----------------

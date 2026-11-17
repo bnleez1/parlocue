@@ -15,7 +15,13 @@ Dialog {
     property bool detectSpeakers: true
     property bool replaceExisting: true
     property bool randomizeVoices: false
+    property string initialText: ""
     property var previewData: ({ lineCount: 0, speakerCount: 0, speakers: [] })
+
+    function openWithText(text) {
+        initialText = text || ""
+        open()
+    }
 
     function refreshPreview() {
         const idx = Math.max(0, speakerCombo.currentIndex)
@@ -26,14 +32,15 @@ Dialog {
     }
 
     onOpened: {
-        scriptInput.text = ""
+        scriptInput.text = initialText
+        initialText = ""
         refreshPreview()
         scriptInput.forceActiveFocus()
     }
 
     background: Rectangle {
-        color: "#18181c"
-        border.color: "#2c2c34"
+        color: theme.surfaceDialog
+        border.color: theme.borderStrong
         border.width: 1
         radius: theme.radius
     }
@@ -45,7 +52,7 @@ Dialog {
             text: qsTr("Paste a lecture or dialogue. Use \"Speaker: text\" for multi-speaker scripts and \"[pause 2s]\" for custom breaks.")
             wrapMode: Text.Wrap
             font.pixelSize: 13
-            color: "#a8a8b3"
+            color: theme.textMuted
             Layout.fillWidth: true
         }
 
@@ -67,7 +74,7 @@ Dialog {
                 Label {
                     text: qsTr("Default speaker:")
                     font.pixelSize: 13
-                    color: "#c8c8d2"
+                    color: theme.textSecondary
                 }
                 ComboBox {
                     id: speakerCombo
@@ -90,18 +97,18 @@ Dialog {
                 id: scriptInput
                 wrapMode: TextEdit.Wrap
                 font.pixelSize: 14
-                color: "#f4f4f6"
+                color: theme.textPrimary
                 topPadding: 10
                 bottomPadding: 10
                 leftPadding: 12
                 rightPadding: 12
                 topInset: 0
                 bottomInset: 0
-                selectionColor: theme.accent
-                selectedTextColor: theme.accentForeground
+                selectionColor: theme.accentControl
+                selectedTextColor: theme.accentControlForeground
                 background: Rectangle {
-                    color: "#111115"
-                    border.color: scriptInput.activeFocus ? theme.accent : "#2a2a32"
+                    color: theme.surfaceInput
+                    border.color: scriptInput.activeFocus ? theme.accentControl : theme.border
                     border.width: 1
                     radius: Math.min(4, theme.radius)
                 }
@@ -115,7 +122,7 @@ Dialog {
                     visible: scriptInput.text.length === 0
                     text: qsTr("Narrator: Listen to a conversation between a student and an advisor.\nStudent: Hi, do you have a minute?\nAdvisor: Sure, come on in.\n[pause 1.5s]\nStudent: I had a question about the syllabus.")
                     font.pixelSize: 14
-                    color: "#686876"
+                    color: theme.textDim
                 }
             }
         }
@@ -125,7 +132,7 @@ Dialog {
             spacing: 12
 
             Rectangle {
-                color: "#22222a"
+                color: theme.surfacePill
                 radius: Math.min(4, theme.radius)
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: previewLabel.implicitWidth + 20
@@ -134,7 +141,7 @@ Dialog {
                     id: previewLabel
                     anchors.centerIn: parent
                     font.pixelSize: 12
-                    color: previewData.lineCount > 0 ? theme.accent : "#888894"
+                    color: previewData.lineCount > 0 ? theme.accentText : theme.textMuted
                     text: previewData.lineCount > 0
                         ? qsTr("Detected %1 lines · %2 speakers (%3)")
                               .arg(previewData.lineCount)
