@@ -931,15 +931,68 @@ QString Backend::nextSpeakerColor(int index) const {
 }
 
 QString inferGenderHint(const QString &name) {
-    const QString lower = name.toLower();
-    static const QRegularExpression maleHints(
-        R"(\b(man|male|boy|mr|sir|father|dad|brother|uncle|king|guy|adam|john|david|mark|alex|kevin|sam)\b)");
-    static const QRegularExpression femaleHints(
-        R"(\b(woman|female|girl|ms|mrs|miss|madam|mother|mom|sister|aunt|queen|sarah|emily|anna|lisa|mary|kate|emma|jenny)\b)");
-    if (maleHints.match(lower).hasMatch())
-        return QStringLiteral("Male");
-    if (femaleHints.match(lower).hasMatch())
-        return QStringLiteral("Female");
+    static const QSet<QString> kMaleHints = {
+        // Roles & honorifics
+        "man", "male", "boy", "mr", "sir", "father", "dad", "daddy", "papa",
+        "grandpa", "grandfather", "granddad", "brother", "uncle", "son", "husband",
+        "boyfriend", "nephew", "king", "prince", "guy", "gentleman", "groom",
+        "waiter", "host", "actor", "he", "him", "his", "senor", "señor", "don",
+        // Common male names
+        "aaron", "adam", "alan", "albert", "alejandro", "alex", "andrew", "anthony",
+        "arthur", "austin", "ben", "benjamin", "billy", "bobby", "brandon", "brian",
+        "bruce", "bryan", "caleb", "carl", "carlos", "charles", "charlie", "chris",
+        "christian", "christopher", "connor", "daniel", "david", "dennis", "diego",
+        "donald", "douglas", "dylan", "edward", "elijah", "eric", "ethan", "eugene",
+        "evan", "felix", "frank", "gabriel", "gary", "gavin", "george", "gerald",
+        "gregory", "harold", "harry", "henry", "hugo", "isaac", "ivan", "jack",
+        "jacob", "james", "jason", "jeffrey", "jeremy", "jerry", "jesse", "joe",
+        "john", "jonathan", "jordan", "jose", "joseph", "joshua", "juan", "julian",
+        "justin", "keith", "kenneth", "kevin", "kyle", "larry", "lawrence", "leo",
+        "liam", "logan", "louis", "lucas", "luis", "luke", "marcus", "mark",
+        "mason", "mateo", "matthew", "max", "michael", "miguel", "nathan",
+        "nathaniel", "nicholas", "nick", "noah", "oliver", "oscar", "owen",
+        "pablo", "patrick", "paul", "peter", "philip", "ralph", "randy", "raymond",
+        "richard", "robert", "roger", "ronald", "roy", "russell", "ryan", "sam",
+        "samuel", "scott", "sean", "sebastian", "simon", "stephen", "steven",
+        "terry", "thomas", "timothy", "tobias", "tom", "tyler", "victor",
+        "vincent", "walter", "wayne", "wesley", "william", "willie", "zachary"
+    };
+    static const QSet<QString> kFemaleHints = {
+        // Roles & honorifics
+        "woman", "female", "girl", "ms", "mrs", "miss", "madam", "madame", "maam",
+        "ma'am", "lady", "mother", "mom", "mommy", "mama", "grandma", "grandmother",
+        "nana", "sister", "aunt", "daughter", "wife", "girlfriend", "niece",
+        "queen", "princess", "bride", "waitress", "hostess", "actress", "she", "her",
+        "senora", "señora", "senorita", "señorita", "dona", "doña",
+        // Common female names
+        "abigail", "alice", "amanda", "amber", "amelia", "amy", "ana", "andrea",
+        "angela", "anna", "aria", "ashley", "audrey", "aurora", "ava", "avery",
+        "barbara", "bella", "betty", "beverly", "brittany", "brooklyn", "camila",
+        "carol", "caroline", "catherine", "charlotte", "chloe", "christina",
+        "christine", "claire", "clara", "crystal", "daniela", "danielle", "denise",
+        "diana", "donna", "eleanor", "elena", "elizabeth", "ella", "ellie",
+        "emilia", "emily", "emma", "evelyn", "everly", "gabriela", "genesis",
+        "grace", "hannah", "harper", "hazel", "heather", "helen", "isabella",
+        "jane", "jennifer", "jenny", "jessica", "julia", "julie", "karen", "kate",
+        "katherine", "katie", "kennedy", "kimberly", "kinsley", "laura", "lauren",
+        "layla", "leah", "lillian", "lily", "linda", "lisa", "lucia", "lucy",
+        "luna", "madison", "margaret", "maria", "marie", "marilyn", "mary",
+        "maya", "megan", "melissa", "mia", "michelle", "mila", "nancy", "natalia",
+        "natalie", "naomi", "nicole", "nora", "nova", "olivia", "paisley",
+        "patricia", "paula", "penelope", "rachel", "rebecca", "riley", "rosa",
+        "rose", "ruth", "samantha", "sandra", "sarah", "savannah", "scarlett",
+        "sharon", "skylar", "sofia", "sophia", "sophie", "stella", "stephanie",
+        "susan", "theresa", "tiffany", "valeria", "vanessa", "victoria", "violet",
+        "willow", "zoe", "zoey"
+    };
+
+    const QStringList tokens = name.toLower().split(QRegularExpression("[^\\p{L}\\p{N}']+"), Qt::SkipEmptyParts);
+    for (const QString &tok : tokens) {
+        if (kMaleHints.contains(tok))
+            return QStringLiteral("Male");
+        if (kFemaleHints.contains(tok))
+            return QStringLiteral("Female");
+    }
     return {};
 }
 

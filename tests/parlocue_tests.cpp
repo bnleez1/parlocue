@@ -376,6 +376,40 @@ private slots:
         QVERIFY(errOut.contains("Unsupported"));
     }
 
+    void randomizeVoicesRespectsNamesAndRolesGender()
+    {
+        QTemporaryDir cacheDir;
+        FakeFilePicker picker;
+        Backend backend(&picker, cacheDir.path(), "/nonexistent/python");
+
+        const QString script =
+            "Waitress: Welcome!\n"
+            "Grandpa: Thank you.\n"
+            "Lucas: I want waffles.\n"
+            "Chloe: Tea please.\n"
+            "Daniel: Coffee please.\n"
+            "Mia: Apple juice!\n";
+
+        backend.importScriptText(script, true, {}, true, true);
+        QCOMPARE(backend.speakerModel()->rowCount(), 7);
+
+        auto genderFor = [&](const QString &shortName) -> QString {
+            for (const auto &v : backend.voiceModel()->allVoices()) {
+                if (v.shortName == shortName)
+                    return v.gender;
+            }
+            return {};
+        };
+
+        for (const auto &sp : backend.speakerModel()->items()) {
+            const QString g = genderFor(sp.voice);
+            if (sp.name == "Grandpa" || sp.name == "Lucas" || sp.name == "Daniel")
+                QCOMPARE(g, QString("Male"));
+            if (sp.name == "Waitress" || sp.name == "Chloe" || sp.name == "Mia")
+                QCOMPARE(g, QString("Female"));
+        }
+    }
+
 private:
     static void write(const QString &path, const QByteArray &contents)
     {
