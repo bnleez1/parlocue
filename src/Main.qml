@@ -622,6 +622,7 @@ ApplicationWindow {
                                             anchors.fill: parent
                                             cursorShape: Qt.PointingHandCursor
                                             onClicked: {
+                                                speakerMenu.targetLineIndex = index
                                                 backend.selectedLineIndex = index
                                                 speakerMenu.open()
                                             }
@@ -629,6 +630,7 @@ ApplicationWindow {
 
                                         Menu {
                                             id: speakerMenu
+                                            property int targetLineIndex: -1
                                             Material.roundedScale: theme.radius
                                             Material.background: theme.surfaceDialog
                                             Material.foreground: theme.textPrimary
@@ -636,7 +638,7 @@ ApplicationWindow {
                                                 model: backend.speakerModel
                                                 delegate: MenuItem {
                                                     text: model.name + " (" + model.voiceDisplay + ")"
-                                                    onTriggered: backend.setLineSpeaker(index, model.speakerId)
+                                                    onTriggered: backend.setLineSpeaker(speakerMenu.targetLineIndex, model.speakerId)
                                                 }
                                                 onObjectAdded: function(idx, obj) { speakerMenu.insertItem(idx, obj) }
                                                 onObjectRemoved: function(idx, obj) { speakerMenu.removeItem(obj) }
